@@ -1,23 +1,31 @@
-# Webinstaller – Entwicklungsstand
+# ESP32 Webinstaller
 
-Diese Seite ist eine **noch nicht flashfähige** Oberfläche für die Multilayout-ESP-Wordclock.
+Diese Variante unterstützt zunächst nur **klassische ESP32-Boards** mit dem PlatformIO-Profil `ESP32` (`esp32dev`).
 
-## Geplante Unterstützung
+## Automatischer Build
 
-- ESP32 (`env:ESP32`)
-- ESP32-C3 (`env:ESP32C3`)
-- ESP8266 (`env:ESP8266`), nach separater Kompatibilitätsprüfung
+Der Workflow `.github/workflows/firmware.yml` baut die Firmware und lädt das Artefakt `wordclock-esp32-webinstaller` hoch. Das Paket enthält:
 
-## Nächste Schritte
+- `index.html` – Webinstaller mit ESP Web Tools
+- `manifest.json` – ESP32 Flash-Offsets
+- `bootloader.bin`, `partitions.bin`, `boot_app0.bin`, `firmware.bin`
+- `SHA256SUMS.txt` – Prüfsummen des Pakets
 
-1. `platformio.ini` und `erase_before_upload.py` so prüfen bzw. ändern, dass normale Firmware-Updates **kein vollständiges Flash-Erase** auslösen.
-2. Alle drei PlatformIO-Umgebungen bauen und die tatsächlichen Binärdateien sowie Flash-Offsets ermitteln.
-3. Für ESP32 und ESP32-C3 passende ESP Web Tools-Manifeste mit realen, veröffentlichten Binärdateien erzeugen.
-4. Browserinstallation und Erhalt gespeicherter Einstellungen auf echter Hardware testen.
-5. Erst nach erfolgreichen Tests den Installationsknopf aktivieren und GitHub Pages einrichten.
+Das Packaging-Skript `docs/install/package_esp32.py` prüft, ob alle Images vorhanden und nicht leer sind, die Partitionstabelle plausibel ist und keine Images die nächste Flash-Region überlappen. Es **flasht keine Hardware**.
 
-**Wichtig:** Keine Platzhalter-Manifeste mit nicht existierenden Firmware-URLs veröffentlichen. Ein Webinstaller darf erst dann eine Installation anbieten, wenn alle Images geprüft sind.
+## Test des Artefakts
 
-## Vorschau
+1. GitHub Actions öffnen und den erfolgreichen Lauf für den Branch `feature/wordclock-webinstaller` auswählen.
+2. Das Artefakt `wordclock-esp32-webinstaller` herunterladen und entpacken.
+3. Dateien lokal per HTTP bereitstellen, z. B. im entpackten Verzeichnis mit `python -m http.server 8000`.
+4. Die Seite unter `http://localhost:8000` in Chrome oder Edge aufrufen.
+5. **Vor einem Flash-Versuch** auf einem entbehrlichen Test-ESP32 Firmware-Layout, Chiptyp, Pinbelegung und Flash-Offsets prüfen. Bestehende Einstellungen vorher sichern.
 
-Die statische Oberfläche liegt unter `docs/install/index.html`. Sie lässt sich lokal im Browser ansehen; die Schaltfläche zum Flashen ist absichtlich deaktiviert.
+Die Installer-Schaltfläche wird nur eingeblendet, wenn Manifest und vier Firmware-Dateien vom Server erreichbar sind. Das ist **keine** vollständige Hardware- oder Sicherheitsprüfung.
+
+## Noch nicht freigegeben
+
+- Kein automatisches Deployment auf GitHub Pages; zuerst Hardwaretests durchführen.
+- Das reguläre Projekt enthält `erase_before_upload.py`, das beim seriellen PlatformIO-Upload vollständiges Löschen erzwingen kann. Das muss vor einem sicheren Update-Workflow bereinigt werden.
+- Ein Webinstaller mit Bootloader/Partitionstabelle ist zunächst für die **Erstinstallation** vorgesehen. Für Updates mit Erhalt der Einstellungen ist ein gesondert getesteter Pfad erforderlich.
+- ESP32-C3 und ESP8266 sind nicht Bestandteil dieses Pakets.
