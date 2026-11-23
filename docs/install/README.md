@@ -25,7 +25,13 @@ Die Installer-Schaltfläche wird nur eingeblendet, wenn Manifest und vier Firmwa
 
 ## Noch nicht freigegeben
 
-- Kein automatisches Deployment auf GitHub Pages; zuerst Hardwaretests durchführen.
-- Das reguläre Projekt enthält `erase_before_upload.py`, das beim seriellen PlatformIO-Upload vollständiges Löschen erzwingen kann. Das muss vor einem sicheren Update-Workflow bereinigt werden.
+- GitHub Pages ist als manuelles Preview-Deployment vorbereitet; zuerst Hardwaretests durchführen.
+- Im Entwicklungsbranch wurde der automatische Aufruf von `erase_before_upload.py` aus `platformio.ini` entfernt. Der Erhalt der Einstellungen muss trotzdem auf Hardware geprüft werden.
 - Ein Webinstaller mit Bootloader/Partitionstabelle ist zunächst für die **Erstinstallation** vorgesehen. Für Updates mit Erhalt der Einstellungen ist ein gesondert getesteter Pfad erforderlich.
 - ESP32-C3 und ESP8266 sind nicht Bestandteil dieses Pakets.
+
+## GitHub Pages (Testveröffentlichung)
+
+Nach erfolgreichem Hardwaretest in Settings → Pages als Source **GitHub Actions** wählen. Die Deployment-Umgebung `github-pages` muss den Entwicklungsbranch zulassen. Den Workflow auf diesem Branch manuell mit `publish_preview: true` starten, sofern GitHub ihn zur manuellen Ausführung anbietet. GitHub verlangt für workflow_dispatch gegebenenfalls, dass die Workflow-Datei auch im Default-Branch vorhanden ist; in diesem Fall erst den Workflow per geprüftem Pull Request übernehmen.
+
+Die Deployment-URL steht nach erfolgreichem Lauf im Job `pages`. Es wird keine Veröffentlichung bei einem normalen Push ausgelöst.
