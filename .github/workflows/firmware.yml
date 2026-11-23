@@ -3,6 +3,11 @@ on:
   push:
     branches: [feature/wordclock-webinstaller]
   workflow_dispatch:
+    inputs:
+      publish_preview:
+        description: 'Publish ESP32 test installer to GitHub Pages'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -45,3 +50,27 @@ jobs:
           name: wordclock-esp32-webinstaller
           path: dist/webinstaller-esp32/
           if-no-files-found: error
+
+  pages:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_preview && github.ref == 'refs/heads/feature/wordclock-webinstaller'
+    needs: firmware
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: wordclock-esp32-webinstaller
+          path: site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy ESP32 test installer
+        id: deployment
+        uses: actions/deploy-pages@v4
