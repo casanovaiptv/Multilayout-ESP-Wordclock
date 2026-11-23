@@ -28,11 +28,20 @@ jobs:
       - name: Build firmware
         run: pio run -e ${{ matrix.environment }}
       - name: Upload firmware build outputs
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: wordclock-${{ matrix.environment }}
           path: |
             .pio/build/${{ matrix.environment }}/*.bin
             .pio/build/${{ matrix.environment }}/*.elf
+          if-no-files-found: error
+      - name: Package ESP32 browser installer
+        if: matrix.environment == 'ESP32'
+        run: python docs/install/package_esp32.py
+      - name: Upload ESP32 installer bundle
+        if: matrix.environment == 'ESP32'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordclock-esp32-webinstaller
+          path: dist/webinstaller-esp32/
           if-no-files-found: error
