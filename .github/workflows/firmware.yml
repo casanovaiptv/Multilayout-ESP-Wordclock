@@ -1,0 +1,38 @@
+name: Build Wordclock firmware
+on:
+  push:
+    branches: [feature/wordclock-webinstaller]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  firmware:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [ESP8266, ESP32, ESP32C3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install web build dependencies
+        run: npm ci
+      - name: Install PlatformIO
+        run: python -m pip install platformio
+      - name: Build firmware
+        run: pio run -e ${{ matrix.environment }}
+      - name: Upload firmware build outputs
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordclock-${{ matrix.environment }}
+          path: |
+            .pio/build/${{ matrix.environment }}/*.bin
+            .pio/build/${{ matrix.environment }}/*.elf
+          if-no-files-found: error
