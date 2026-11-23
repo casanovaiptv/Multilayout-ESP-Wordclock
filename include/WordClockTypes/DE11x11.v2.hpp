@@ -24,11 +24,11 @@ class De11x11V2_t : public De11x11_t {
 public:
     //------------------------------------------------------------------------------
 
-    virtual const bool hasTwenty() override { return false; }
+    virtual bool hasTwenty() override { return false; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:
@@ -124,10 +124,6 @@ public:
 
         case FrontWord::hour_12:
             setFrontMatrixWord(9, 6, 10);
-            break;
-
-        case FrontWord::funk:
-            setFrontMatrixWord(10, 3, 6);
             break;
 
         default:

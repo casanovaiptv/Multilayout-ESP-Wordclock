@@ -1,5 +1,8 @@
 #pragma once
 
+#include "NumberFont.h"
+#include "Render/ColorMatrix.h"
+#include "WordClockState.h"
 #include <NeoPixelBus.h>
 
 class Led {
@@ -7,17 +10,16 @@ private:
     //------------------------------------------------------------------------------
     // Helper Functions
     //------------------------------------------------------------------------------
-    inline uint8_t reverse8BitOrder(uint8_t x);
-    inline uint32_t reverse32BitOrder(uint32_t x);
-    void applyMirroringAndReverseIfDefined();
-    fontSize determineFontSize();
-    void setupDigitalClock(fontSize &usedFontSize, uint8_t &offsetLetterH0,
-                           uint8_t &offsetLetterH1, uint8_t &offsetLetterMin0,
-                           uint8_t &offsetLetterMin1, uint8_t &offsetRow0,
-                           uint8_t &offsetRow1);
-    void toggleDigitalClockSecond(const fontSize &usedFontSize,
+    uint8_t reverse8BitOrder(uint8_t x);
+    uint32_t reverse32BitOrder(uint32_t x);
+    void setupDigitalClock(const NumberFont &numberFont,
+                           uint8_t &offsetLetterH0, uint8_t &offsetLetterH1,
+                           uint8_t &offsetLetterMin0, uint8_t &offsetLetterMin1,
+                           uint8_t &offsetRow0, uint8_t &offsetRow1);
+    void toggleDigitalClockSecond(const NumberFont &numberFont,
                                   const uint8_t &offsetRow1,
                                   const uint8_t &offsetMin0);
+    void drawBitmapSymbol(BitmapSymbol symbolNum);
 
 public:
     Led(/* args */) = default;
@@ -26,7 +28,7 @@ public:
     //------------------------------------------------------------------------------
     // Helper Functions
     //------------------------------------------------------------------------------
-    inline void checkIfHueIsOutOfBound(uint16_t &hue);
+    void checkIfHueIsOutOfBound(uint16_t &hue);
     void resetFrontMatrixBuffer();
     bool getCharCol(fontSize font, uint8_t col, uint8_t row,
                     unsigned char unsigned_d1);
@@ -34,9 +36,10 @@ public:
     //------------------------------------------------------------------------------
     // Manipulate Functions
     //------------------------------------------------------------------------------
-    inline void mirrorMinuteArrayVertical();
-    inline void mirrorFrontMatrixVertical();
-    inline void mirrorFrontMatrixHorizontal();
+    void mirrorMinuteArrayVertical();
+    void mirrorFrontMatrixVertical();
+    void mirrorFrontMatrixHorizontal();
+    void applyMirroringAndReverseIfDefined();
 
     //------------------------------------------------------------------------------
     // Brightness Functions
@@ -54,10 +57,13 @@ public:
     void setPixel(uint8_t row, uint8_t col, HsbColor color);
     void setbyFrontMatrix(ColorPosition position = Foreground,
                           bool applyMirrorAndReverse = true);
-    void setbyFrontMatrix(HsbColor color, bool applyMirrorAndReverse = true);
+    void setbyFrontMatrixGradient(HsbColor from, HsbColor to,
+                                  bool applyMirrorAndReverse = true);
     void setbyMinuteArray(ColorPosition position = Foreground);
     void setbySecondArray(ColorPosition position = Foreground);
+    void setbyColorMatrix(const ColorMatrix &matrix);
     void setBitmapSymbol(BitmapSymbol symbolNum, HsbColor color);
+    void setBitmapSymbol(BitmapSymbol symbolNum, HsbColor from, HsbColor to);
     void setSingle(uint8_t wait);
     void setPixelForChar(uint8_t col, uint8_t row, uint8_t offsetCol,
                          uint8_t offsetRow, unsigned char unsigned_d1,
@@ -68,25 +74,24 @@ public:
     // Pixel get Functions
     //------------------------------------------------------------------------------
     bool getState();
-    RgbColor getPixel(uint16_t i);
 
     //------------------------------------------------------------------------------
     // Pixel Clear Functions
     //------------------------------------------------------------------------------
-    inline void clearPixel(uint16_t i);
-    inline void clearPixel(uint8_t row, uint8_t col);
-    inline void clearClock();
-    inline void clearRow(uint8_t row);
-    inline void clearMinArray();
-    inline void clearFrontExeptofFontspace(uint8_t offsetRow);
-    inline void clearFrame();
-    inline void clear();
+    void clearPixel(uint16_t i);
+    void clearPixel(uint8_t row, uint8_t col);
+    void clearClock();
+    void clearRow(uint8_t row);
+    void clearMinArray();
+    void clearFrontExeptofFontspace(uint8_t offsetRow);
+    void clearFrame();
+    void clear();
 
     //------------------------------------------------------------------------------
     // Show Functions
     //------------------------------------------------------------------------------
     void showNumbers(const char d1, const char d2);
     void showDigitalClock(const char min1, const char min0, const char h1,
-                          const char h0, bool parametersChanged);
+                          const char h0);
     void show();
 };

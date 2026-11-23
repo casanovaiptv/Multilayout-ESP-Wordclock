@@ -1,9 +1,8 @@
 let TRANSLATION_NL = {
 	"title": "Woordklok",
-
 	"menu": {
-		"aria-show-menu": "Menu tonen",
-		"aria-hide-menu": "Menu verbergen",
+		"more": "Meer",
+		"view": "Weergave",
 		"language": {
 			"label": "Taal",
 			"de": "🇩🇪 Duits",
@@ -15,28 +14,42 @@ let TRANSLATION_NL = {
 			"ru": "🇷🇺 Russisch"
 		}
 	},
-
 	"connection-lost": {
 		"button": "Verbinden",
 		"text": "De verbinding met de Woordklok is verbroken."
 	},
-
 	"reboot-recommended": {
 		"button": "Herstart",
 		"text": "Een herstart wordt aanbevolen om de gewijzigde instelling toe te passen."
 	},
-
+	"status": {
+		"online": "Verbonden",
+		"offline": "Niet verbonden"
+	},
 	"colors": {
 		"h1": "Kleuren",
-		"with-background": "Met achtergrondkleur"
+		"hint": "Wijzigingen worden direct naar de klok gestuurd.",
+		"target": "Wat inkleuren?",
+		"wheel": "Kleurenwiel",
+		"temperature": "Kleurtemperatuur",
+		"brightness": "Helderheid",
+		"favorites": "Favorieten",
+		"off": "Uitschakelen"
 	},
-
 	"functions": {
 		"h1": "Functies",
 		"color": {
 			"foreground": "Voorgrond",
 			"background": "Achtergrond",
-			"frame": "Frame"
+			"frame": "Frame",
+			"primary": "Primaire kleur",
+			"secondary": "Secundaire kleur",
+			"mode": {
+				"label": "Kleurmodus",
+				"monochrome": "Monochroom",
+				"polychrome": "Polychroom",
+				"word_random": "Willekeurig per woord"
+			}
 		},
 		"mode": {
 			"h2": "Modus",
@@ -47,7 +60,31 @@ let TRANSLATION_NL = {
 			"scrollingtext": "Tekst",
 			"rainbow": "Regenboog",
 			"color-change": "Kleurverandering",
+			"fire": "Vuur",
 			"symbol": "Symbool"
+		},
+		"birthdays": {
+			"h1": "Verjaardagen",
+			"help": "Op verjaardagen verschijnt elke 5 minuten een vuurwerkanimatie.\n" +
+				"Compatibele kloktypes tonen tijdens de animatie de woorden “Happy Birthday” in plaats van de tijd. Datumnotatie MM-DD\n",
+			"dates": {
+				"save": "Opslaan",
+				"date0": {
+					"label": "Datum 1:"
+				},
+				"date1": {
+					"label": "Datum 2:"
+				},
+				"date2": {
+					"label": "Datum 3:"
+				},
+				"date3": {
+					"label": "Datum 4:"
+				},
+				"date4": {
+					"label": "Datum 5:"
+				}
+			}
 		},
 		"transition": {
 			"h2": "Overgang",
@@ -64,7 +101,6 @@ let TRANSLATION_NL = {
 				"balls": "Ballen",
 				"firework": "Vuurwerk",
 				"snake": "Slang",
-				"colored": "Kleurrijk",
 				"random": "Willekeurig"
 			},
 			"duration": {
@@ -72,15 +108,6 @@ let TRANSLATION_NL = {
 				"short": "Kort",
 				"medium": "Middel",
 				"long": "Lang"
-			},
-			"color": {
-				"label": "Kleurovergang",
-				"off": "Uit",
-				"words": "Gekleurde woorden",
-				"letters": "Gekleurde letters"
-			},
-			"speed": {
-				"label": "Snelheid"
 			},
 			"demo": {
 				"label": "Voorbeeld"
@@ -92,8 +119,8 @@ let TRANSLATION_NL = {
 			"scrollingtext": "Tekst",
 			"save": "Opslaan",
 			"speed": "Snelheid ",
-			"leds": "Aantal LED's ",
-			"position": "Positie "
+			"fire-cooling": "Afkoeling ",
+			"fire-sparking": "Vonken "
 		}
 	},
 
@@ -105,10 +132,8 @@ let TRANSLATION_NL = {
 			"variant": "Klok variant",
 			"de-10-11": "🇩🇪 10 × 11",
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternatief",
-			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternatief Frame",
 			"de-10-11-clock": "🇩🇪 10 × 11 Clock",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
-			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero Frame",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
 			"de-10-11-bayerisch": "🇩🇪 10 × 11 Beiers",
 			"de-10-11-schwaebisch": "🇩🇪 10 × 11 Zwabische stijl",
@@ -117,7 +142,7 @@ let TRANSLATION_NL = {
 			"de-11-11-v2": "🇩🇪 11 × 11 Versie 2",
 			"de-11-11-v3": "🇩🇪 11 × 11 (panbachi)",
 			"de-13-13": "🇩🇪 13 × 13",
-			"de-22-11-weather": "🇩🇪 10 × 11 Weer",
+			"de-22-11-weather": "🇩🇪 22 × 11 Weer",
 			"de-16-8": "🇩🇪 16 × 8",
 			"de-16-18": "🇩🇪 16 × 18",
 			"de-08-08": "🇩🇪 8 × 8",
@@ -138,9 +163,13 @@ let TRANSLATION_NL = {
 			"tr-10-11": "🇹🇷 10 × 11",
 			"ru-10-11": "🇷🇺 10 × 11",
 			"ch-10-11-v2": "🇨🇭 10 x 11 Versie 2",
+			"ch-10-11-zh": "🇨🇭 10 x 11 Züridütsch",
 			"invert-min-dir": "Draai minuutrichting om",
 			"mirror-vertically": "Spiegel Woordklok verticaal",
 			"mirror-horizontally": "Spiegel Woordklok horizontaal",
+			"extra-led-per-row": "Extra LED per rij toevoegen",
+			"flip-horz-vert": "Layout horizontaal en verticaal omdraaien",
+			"meander-rows": "Rijen in meander geplaatst",
 			"buildtype": "bouwtype",
 			"normal": "Elke LED komt overeen met een letter",
 			"doubleResM1": "Elke tweede LED komt overeen met een letter",
@@ -150,7 +179,7 @@ let TRANSLATION_NL = {
 		},
 		"language": {
 			"h2": "Taal",
-			"hide-it-is": "„Display 'Het is'“",
+			"hide-it-is": "“Het is” weergeven",
 			"it-is-off": "Uit",
 			"it-is-hourly": "Per uur",
 			"it-is-half-hourly": "Per half uur",
@@ -178,11 +207,11 @@ let TRANSLATION_NL = {
 			"off": "Uit",
 			"normal-4-leds": "Normaal (4 LEDs)",
 			"normal-7-leds": "Normaal (7 LEDs)",
-			"edges": "Hoeken",
 			"in-words": "In woorden"
 		},
 		"seconds": {
 			"h2": "Seconden",
+			"led-count": "Aantal LED's in het secondenkader (0 = uitgeschakeld)",
 			"in-border": "Seconden in de rand",
 			"off": "Uit",
 			"point": "Punt",
@@ -204,7 +233,9 @@ let TRANSLATION_NL = {
 		"status": {
 			"h2": "Status",
 			"label": "Verbindingsstatus",
-			"connect": "Verbinden"
+			"connect": "Verbinden",
+			"disconnect": "Verbinding verbreken",
+			"connecting": "Verbinden ..."
 		},
 		"led-type": {
 			"h2": "LED Type",
@@ -241,12 +272,12 @@ let TRANSLATION_NL = {
 			"duplicate": "Elke pin mag maar één keer worden gebruikt.",
 			"save": "Opslaan"
 		},
-		"wit type": {
+		"whitetype": {
 			"h2": "Type witte LED",
 			"in-border": "Instelling van het type witte LED van de RGBW-strip",
-			"ww": "warm white",
-			"nw": "neutral white",
-			"cw": "cool white"
+			"ww": "warmwit",
+			"nw": "neutraalwit",
+			"cw": "koudwit"
 		},
 		"time-server": {
 			"h2": "Tijdserver",
@@ -339,7 +370,17 @@ let TRANSLATION_NL = {
 			"client-id": "Client ID",
 			"topic": "Topic",
 			"save": "Opslaan",
-			"discovery": "Send HA Discovery"
+			"discovery": "Send HA Discovery",
+			"status": "Status",
+			"status-not-configured": "Niet geconfigureerd",
+			"status-connected": "Verbonden",
+			"status-disconnected": "Niet verbonden",
+			"status-server-not-found": "Server niet gevonden",
+			"status-unreachable": "Server niet bereikbaar",
+			"status-bad-credentials": "Geweigerd: onjuiste inloggegevens",
+			"status-unauthorized": "Geweigerd: geen toestemming",
+			"status-bad-client-id": "Geweigerd: ongeldige client-ID",
+			"status-refused": "Geweigerd door server"
 		}
 	},
 	"about": {
@@ -347,7 +388,6 @@ let TRANSLATION_NL = {
 		"text-general": "De software van deze Woordklok is gebaseerd op een project van <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (as of 2019)</a> en wordt nu verder ontwikkeld <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>door de community</a> op <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
 		"text-update": "Een update voor de software is mogelijk, daarvoor kun je <a href='update' onmouseover='javascript:event.target.port=81'>hier klikken</a>.",
 		"text-license": "Dit project is open source gelicenseerd onder de BSD 3-Clause License.",
-		"software": "Bibliotheken en software",
 		"debug": "Debug Output"
 	},
 	"footer": {

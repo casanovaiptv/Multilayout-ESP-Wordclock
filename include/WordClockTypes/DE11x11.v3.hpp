@@ -22,27 +22,15 @@
 
 class De11x11V3_t : public De11x11_t {
 public:
-    virtual const void getMinuteArray(uint16_t *returnArr,
-                                      uint8_t col) override {
-
-        uint16_t numPixelsWordMatrix = rowsWordMatrix() * colsWordMatrix();
-
-        for (uint8_t i = 0; i < 4; i++) {
-            returnArr[i] = numPixelsWordMatrix + i;
-        }
-    };
+    virtual bool hasLed4x() override { return false; }
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasLed4x() override { return false; }
+    virtual bool hasMinuteInWords() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasMinuteInWords() override { return true; }
-
-    //------------------------------------------------------------------------------
-
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:
@@ -140,23 +128,20 @@ public:
             setFrontMatrixWord(4, 1, 5);
             break;
 
-        case FrontWord::funk:
-            break;
-
-        case FrontWord::m_num1:
-            setFrontMatrixWord(10, 8, 8);
-            break;
-
-        case FrontWord::m_num2:
-            setFrontMatrixWord(10, 6, 6);
-            break;
+        case FrontWord::m_num4:
+            setFrontMatrixWord(10, 2, 2);
+            [[fallthrough]];
 
         case FrontWord::m_num3:
             setFrontMatrixWord(10, 4, 4);
-            break;
+            [[fallthrough]];
 
-        case FrontWord::m_num4:
-            setFrontMatrixWord(10, 2, 2);
+        case FrontWord::m_num2:
+            setFrontMatrixWord(10, 6, 6);
+            [[fallthrough]];
+
+        case FrontWord::m_num1:
+            setFrontMatrixWord(10, 8, 8);
             break;
 
         default:

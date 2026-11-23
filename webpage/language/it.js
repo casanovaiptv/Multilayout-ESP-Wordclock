@@ -1,9 +1,8 @@
 let TRANSLATION_IT = {
 	"title": "Orologio di parole",
-
 	"menu": {
-		"aria-show-menu": "Mostra menù",
-		"aria-hide-menu": "Nascondi menù",
+		"more": "Altro",
+		"view": "Vista",
 		"language": {
 			"label": "Lingua",
 			"de": "🇩🇪 Tedesco",
@@ -15,28 +14,42 @@ let TRANSLATION_IT = {
 			"ru": "🇷🇺 Russo"
 		}
 	},
-
 	"connection-lost": {
 		"button": "Collegare",
 		"text": "La connessione con l'orologio è stata persa."
 	},
-
 	"reboot-recommended": {
 		"button": "Riavvia",
 		"text": "Si consiglia un riavvio per applicare l'impostazione modificata."
 	},
-
+	"status": {
+		"online": "Connesso",
+		"offline": "Disconnesso"
+	},
 	"colors": {
 		"h1": "Colori",
-		"with-background": "Con colore di sfondo"
+		"hint": "Le modifiche vengono inviate subito all'orologio.",
+		"target": "Cosa colorare?",
+		"wheel": "Ruota dei colori",
+		"temperature": "Temperatura colore",
+		"brightness": "Luminosità",
+		"favorites": "Preferiti",
+		"off": "Spegni"
 	},
-
 	"functions": {
 		"h1": "Caratteristiche",
 		"color": {
 			"foreground": "Primo",
 			"background": "Sfondo",
-			"frame": "Telaio"
+			"frame": "Telaio",
+			"primary": "Colore primario",
+			"secondary": "Colore secondario",
+			"mode": {
+				"label": "Modalità colore",
+				"monochrome": "Monocromo",
+				"polychrome": "Policromo",
+				"word_random": "Casuale per parola"
+			}
 		},
 		"mode": {
 			"h2": "Modalità",
@@ -47,7 +60,31 @@ let TRANSLATION_IT = {
 			"scrollingtext": "Testo in esecuzione",
 			"rainbow": "Arcobaleno",
 			"color-change": "Cambio di colore",
+			"fire": "Fuoco",
 			"symbol": "Simbolo"
+		},
+		"birthdays": {
+			"h1": "Compleanni",
+			"help": "Nei compleanni ogni 5 minuti compare un'animazione di fuochi d'artificio.\n" +
+				"I tipi di orologio compatibili mostrano le parole “Happy Birthday” al posto dell'ora durante l'animazione. Formato data MM-DD\n",
+			"dates": {
+				"save": "Salva",
+				"date0": {
+					"label": "Data 1:"
+				},
+				"date1": {
+					"label": "Data 2:"
+				},
+				"date2": {
+					"label": "Data 3:"
+				},
+				"date3": {
+					"label": "Data 4:"
+				},
+				"date4": {
+					"label": "Data 5:"
+				}
+			}
 		},
 		"transition": {
 			"h2": "Transizione",
@@ -64,7 +101,6 @@ let TRANSLATION_IT = {
 				"balls": "Palle",
 				"firework": "Fuoco d'artificio",
 				"snake": "Serpente",
-				"colored": "Colorato",
 				"random": "Casuale"
 			},
 			"duration": {
@@ -72,15 +108,6 @@ let TRANSLATION_IT = {
 				"short": "corto",
 				"medium": "metà",
 				"long": "lungo"
-			},
-			"color": {
-				"label": "Transizione a colori",
-				"off": "Spegni",
-				"words": "Parole colorate",
-				"letters": "Lettere colorate"
-			},
-			"speed": {
-				"label": "Velocità"
 			},
 			"demo": {
 				"label": "Demo"
@@ -92,8 +119,8 @@ let TRANSLATION_IT = {
 			"scrollingtext": "Testo in esecuzione",
 			"save": "Salvar",
 			"speed": "Velocità ",
-			"leds": "Numero de LEDs ",
-			"position": "Posizione "
+			"fire-cooling": "Raffreddamento ",
+			"fire-sparking": "Scintille "
 		}
 	},
 
@@ -105,10 +132,8 @@ let TRANSLATION_IT = {
 			"variant": "Scelta della variante dell'orologio",
 			"de-10-11": "🇩🇪 10 × 11",
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternativ",
-			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternativer Rahmen",
 			"de-10-11-clock": "🇩🇪 10 × 11 Uhr",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
-			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero Rahmen",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
 			"de-10-11-bayerisch": "🇩🇪 10 × 11 bavarese",
 			"de-10-11-schwaebisch": "🇩🇪 10 × 11 Stile svevo",
@@ -117,7 +142,7 @@ let TRANSLATION_IT = {
 			"de-11-11-v2": "🇩🇪 11 × 11 Version 2",
 			"de-11-11-v3": "🇩🇪 11 × 11 (panbachi)",
 			"de-13-13": "🇩🇪 13 × 13",
-			"de-22-11-weather": "🇩🇪 10 × 11 Wetter",
+			"de-22-11-weather": "🇩🇪 22 × 11 Wetter",
 			"de-16-8": "🇩🇪 16 × 8",
 			"de-16-18": "🇩🇪 16 × 18",
 			"de-08-08": "🇩🇪 8 × 8",
@@ -138,9 +163,13 @@ let TRANSLATION_IT = {
 			"bn-9-8": "🇧🇩 9 × 8",
 			"tr-10-11": "🇹🇷 10 × 11",
 			"ch-10-11-v2": "🇨🇭 10 x 11 Version 2",
+			"ch-10-11-zh": "🇨🇭 10 x 11 Züridütsch",
 			"invert-min-dir": "Invertire la direzione del conteggio dei minuti",
 			"mirror-vertically": "Capovolgi l'orologio verticalmente",
 			"mirror-horizontally": "Capovolgi l'orologio orizzontalmente",
+			"extra-led-per-row": "Aggiungi un LED extra per riga",
+			"flip-horz-vert": "Capovolgi il layout in orizzontale e verticale",
+			"meander-rows": "Righe disposte a meandro",
 			"buildtype": "Tipo di progetto",
 			"normal": "Ogni LED corrisponde ad una lettera",
 			"doubleResM1": "Ogni secondo LED corrisponde a una lettera",
@@ -150,7 +179,7 @@ let TRANSLATION_IT = {
 		},
 		"language": {
 			"h2": "Lingua",
-			"hide-it-is": "Visualizza 'Sono le'“",
+			"hide-it-is": "Visualizza «Sono le»",
 			"it-is-off": "Spento",
 			"it-is-hourly": "Oario",
 			"it-is-half-hourly": "Mezz'ora",
@@ -161,11 +190,14 @@ let TRANSLATION_IT = {
 			"quarter-nine": "un quarto di diez",
 			"at-nine-twenty": "Sono le 9:20 ...",
 			"twenty-past-nine": "nove e venti",
+			"ten-before-half-past-ten": "dieci alle nove e mezza",
 			"at-nine-fourty": "Sono le 9:40 ...",
 			"twenty-before-ten": "dalle venti alle dieci",
+			"ten-after-half-past-ten": "dieci dopo le nove e mezza",
 			"at-nine-fourtyfive-german": "Sono le 9:45 ...",
 			"quarter-to-ten": "dieci meno un quarto",
 			"three-quarter-ten": "quindici minuti alle dieci",
+			"at-nine-fourtyfive-english": "Sono le 9:45 ...",
 			"quarter-to-ten-english": "Quarter to ten",
 			"a-quarter-to-ten-english": "A quarter to ten"
 		},
@@ -175,11 +207,11 @@ let TRANSLATION_IT = {
 			"off": "Apagado",
 			"normal-4-leds": "Normal (4 LEDs)",
 			"normal-7-leds": "Normal (7 LEDs)",
-			"edges": "Esquinas",
 			"in-words": "En palabras"
 		},
 		"seconds": {
 			"h2": "Segundos",
+			"led-count": "Numero di LED nella cornice dei secondi (0 = disattivato)",
 			"in-border": "Los segundos se muestran en el marco.",
 			"off": "Spegni",
 			"point": "Punto",
@@ -201,7 +233,9 @@ let TRANSLATION_IT = {
 		"status": {
 			"h2": "Stato",
 			"label": "Stato della connessione",
-			"connect": "Collegare"
+			"connect": "Collegare",
+			"disconnect": "Disconnetti",
+			"connecting": "Connessione ..."
 		},
 		"led-type": {
 			"h2": "Tipo LED",
@@ -336,7 +370,17 @@ let TRANSLATION_IT = {
 			"client-id": "Client-ID",
 			"topic": "Argomento",
 			"save": "Guardar ajustes",
-			"discovery": "Send HA Discovery"
+			"discovery": "Send HA Discovery",
+			"status": "Stato",
+			"status-not-configured": "Non configurato",
+			"status-connected": "Connesso",
+			"status-disconnected": "Non connesso",
+			"status-server-not-found": "Server non trovato",
+			"status-unreachable": "Server non raggiungibile",
+			"status-bad-credentials": "Rifiutato: credenziali errate",
+			"status-unauthorized": "Rifiutato: non autorizzato",
+			"status-bad-client-id": "Rifiutato: ID client non valido",
+			"status-refused": "Rifiutato dal server"
 		}
 	},
 
@@ -345,7 +389,6 @@ let TRANSLATION_IT = {
 		"text-general": "Il software di questo orologio è basato sull'orologio <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (Stand 2019)</a> e lo farò ora <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>dalla comunità</a> ulteriormente sviluppato <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
 		"text-update": "È possibile eseguire un aggiornamento software, per favore fallo. <a href='update' onmouseover='javascript:event.target.port=81'>Vai alla pagina di aggiornamento</a>.",
 		"text-license": "Questo progetto è concesso in licenza open source con la licenza <span lang='en'>3-Clause BSD License</span>.",
-		"software": "Librerie e software",
 		"debug": "Uscita di debug"
 	},
 	"footer": {

@@ -1,9 +1,8 @@
 let TRANSLATION_EN_US = {
 	"title": "Wordclock",
-
 	"menu": {
-		"aria-show-menu": "Show Menu",
-		"aria-hide-menu": "Hide Menu",
+		"more": "More",
+		"view": "Display",
 		"language": {
 			"label": "Language",
 			"de": "🇩🇪 German",
@@ -15,28 +14,42 @@ let TRANSLATION_EN_US = {
 			"ru": "🇷🇺 Russian"
 		}
 	},
-
 	"connection-lost": {
 		"button": "Connect",
 		"text": "The connection to the Word Clock has been lost."
 	},
-
 	"reboot-recommended": {
 		"button": "Restart",
 		"text": "A restart is recommended to apply the changed setting."
 	},
-
+	"status": {
+		"online": "Connected",
+		"offline": "Disconnected"
+	},
 	"colors": {
 		"h1": "Colors",
-		"with-background": "With Background Color"
+		"hint": "Changes are sent to the clock immediately.",
+		"target": "What to color?",
+		"wheel": "Color wheel",
+		"temperature": "Color temperature",
+		"brightness": "Brightness",
+		"favorites": "Favorites",
+		"off": "Turn off"
 	},
-
 	"functions": {
 		"h1": "Functions",
 		"color": {
 			"foreground": "Foreground",
 			"background": "Background",
-			"frame": "Frame"
+			"frame": "Frame",
+			"primary": "Primary color",
+			"secondary": "Secondary color",
+			"mode": {
+				"label": "Color mode",
+				"monochrome": "Monochrome",
+				"polychrome": "Polychrome",
+				"word_random": "Random per word"
+			}
 		},
 		"mode": {
 			"h2": "Mode",
@@ -47,6 +60,7 @@ let TRANSLATION_EN_US = {
 			"scrollingtext": "Scrollingtext",
 			"rainbow": "Rainbow",
 			"color-change": "Color Change",
+			"fire": "Fire",
 			"symbol": "Symbol"
 		},
 		"birthdays": {
@@ -87,7 +101,6 @@ let TRANSLATION_EN_US = {
 				"balls": "Balls",
 				"firework": "Firework",
 				"snake": "Snake",
-				"colored": "Colored",
 				"random": "Random"
 			},
 			"duration": {
@@ -95,15 +108,6 @@ let TRANSLATION_EN_US = {
 				"short": "Short",
 				"medium": "Medium",
 				"long": "Long"
-			},
-			"color": {
-				"label": "Color transition",
-				"off": "Off",
-				"words": "Colored Words",
-				"letters": "Colored Letters"
-			},
-			"speed": {
-				"label": "Speed"
 			},
 			"demo": {
 				"label": "Demo"
@@ -115,8 +119,8 @@ let TRANSLATION_EN_US = {
 			"scrollingtext": "Scrolling text",
 			"save": "Save",
 			"speed": "Speed ",
-			"leds": "Number of LEDs ",
-			"position": "Position "
+			"fire-cooling": "Cooling ",
+			"fire-sparking": "Sparking "
 		}
 	},
 
@@ -128,10 +132,8 @@ let TRANSLATION_EN_US = {
 			"variant": "Choice of Clock Variant",
 			"de-10-11": "🇩🇪 10 × 11",
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternative",
-			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternative Frame",
 			"de-10-11-clock": "🇩🇪 10 × 11 Clock",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
-			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero Frame",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
 			"de-10-11-bayerisch": "🇩🇪 10 × 11 Bavarian",
 			"de-10-11-schwaebisch": "🇩🇪 10 × 11 Swabian Style",
@@ -140,7 +142,7 @@ let TRANSLATION_EN_US = {
 			"de-11-11-v2": "🇩🇪 11 × 11 Version 2",
 			"de-11-11-v3": "🇩🇪 11 × 11 (panbachi)",
 			"de-13-13": "🇩🇪 13 × 13",
-			"de-22-11-weather": "🇩🇪 10 × 11 Weather",
+			"de-22-11-weather": "🇩🇪 22 × 11 Weather",
 			"de-16-8": "🇩🇪 16 × 8",
 			"de-16-18": "🇩🇪 16 × 18",
 			"de-08-08": "🇩🇪 8 × 8",
@@ -161,6 +163,7 @@ let TRANSLATION_EN_US = {
 			"bn-9-8": "🇧🇩 9 × 8",
 			"tr-10-11": "🇹🇷 10 × 11",
 			"ch-10-11-v2": "🇨🇭 10 x 11 Version 2",
+			"ch-10-11-zh": "🇨🇭 10 x 11 Zurich German",
 			"invert-min-dir": "Invert Minute Counting Direction",
 			"mirror-vertically": "Mirror Word Clock Vertically",
 			"mirror-horizontally": "Mirror Word Clock Horizontally",
@@ -176,7 +179,7 @@ let TRANSLATION_EN_US = {
 		},
 		"language": {
 			"h2": "Language",
-			"hide-it-is": "„Display 'It is'“",
+			"hide-it-is": "“It is” display",
 			"it-is-off": "Off",
 			"it-is-hourly": "Hourly",
 			"it-is-half-hourly": "Half-hourly",
@@ -204,11 +207,11 @@ let TRANSLATION_EN_US = {
 			"off": "Off",
 			"normal-4-leds": "Normal (4 LEDs)",
 			"normal-7-leds": "Normal (7 LEDs)",
-			"edges": "Edges",
 			"in-words": "In Words"
 		},
 		"seconds": {
 			"h2": "Seconds",
+			"led-count": "Number of LED's in the seconds frame (0 = disabled)",
 			"in-border": "Seconds in the Border",
 			"off": "Off",
 			"point": "Dot",
@@ -230,7 +233,9 @@ let TRANSLATION_EN_US = {
 		"status": {
 			"h2": "Status",
 			"label": "Connection Status",
-			"connect": "Connect"
+			"connect": "Connect",
+			"disconnect": "Disconnect",
+			"connecting": "Connecting ..."
 		},
 		"led-type": {
 			"h2": "LED Type",
@@ -365,7 +370,17 @@ let TRANSLATION_EN_US = {
 			"client-id": "Client ID",
 			"topic": "Topic",
 			"save": "Save Settings",
-			"discovery": "Send HA Discovery"
+			"discovery": "Send HA Discovery",
+			"status": "Status",
+			"status-not-configured": "Not configured",
+			"status-connected": "Connected",
+			"status-disconnected": "Not connected",
+			"status-server-not-found": "Server not found",
+			"status-unreachable": "Server not reachable",
+			"status-bad-credentials": "Refused: wrong credentials",
+			"status-unauthorized": "Refused: not authorised",
+			"status-bad-client-id": "Refused: invalid client ID",
+			"status-refused": "Refused by server"
 		}
 	},
 	"about": {
@@ -373,7 +388,6 @@ let TRANSLATION_EN_US = {
 		"text-general": "The software of this Word Clock is based on the Word Clock by <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (as of 2019)</a> and is now being further developed <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>by the community</a> on <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
 		"text-update": "An update of the software is possible, please <a href='update' onmouseover='javascript:event.target.port=81'>switch to the update page</a>.",
 		"text-license": "This project is open source licensed under the BSD 3-Clause License.",
-		"software": "Libraries and Software",
 		"debug": "Debug Output"
 	},
 	"footer": {

@@ -31,23 +31,23 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasMitternacht() override { return true; }
+    virtual bool hasMitternacht() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t rowsWordMatrix() override { return 13; };
+    virtual uint8_t rowsWordMatrix() override { return 13; };
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t colsWordMatrix() override { return 13; };
+    virtual uint8_t colsWordMatrix() override { return 13; };
 
     //------------------------------------------------------------------------------
 
-    virtual const bool has60MinuteLayout() override { return true; }
+    virtual bool has60MinuteLayout() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:

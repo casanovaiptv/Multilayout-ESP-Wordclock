@@ -25,19 +25,19 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t rowsWordMatrix() override { return 8; };
+    virtual uint8_t rowsWordMatrix() override { return 8; };
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t colsWordMatrix() override { return 8; };
+    virtual uint8_t colsWordMatrix() override { return 8; };
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasTwenty() override { return false; }
+    virtual bool hasTwenty() override { return false; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
 
         switch (word) {
 

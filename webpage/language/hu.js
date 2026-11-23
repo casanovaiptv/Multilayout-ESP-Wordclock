@@ -1,9 +1,8 @@
 let TRANSLATION_HU = {
 	"title": "Szövegóra",
-
 	"menu": {
-		"aria-show-menu": "Menü mutatása",
-		"aria-hide-menu": "Menü elrejtése",
+		"more": "Továbbiak",
+		"view": "Kijelző",
 		"language": {
 			"label": "Nyelv",
 			"de": "🇩🇪 Német",
@@ -15,28 +14,42 @@ let TRANSLATION_HU = {
 			"ru": "🇷🇺 Orosz"
 		}
 	},
-
 	"connection-lost": {
 		"button": "Kapcsolódás",
 		"text": "A kapcsolódás a Szövegórához megszakadt."
 	},
-
 	"reboot-recommended": {
 		"button": "Újraindítás",
 		"text": "Az újraindítás ajánlott a módosított beállítás alkalmazásához."
 	},
-
+	"status": {
+		"online": "Csatlakoztatva",
+		"offline": "Nincs kapcsolat"
+	},
 	"colors": {
 		"h1": "Színek",
-		"with-background": "Háttérszínnel"
+		"hint": "A változtatások azonnal az órára kerülnek.",
+		"target": "Mit színezzünk?",
+		"wheel": "Színkerék",
+		"temperature": "Színhőmérséklet",
+		"brightness": "Fényerő",
+		"favorites": "Kedvencek",
+		"off": "Kikapcsolás"
 	},
-
 	"functions": {
 		"h1": "Funkciók",
 		"color": {
 			"foreground": "Új ismeretek",
 			"background": "Háttér",
-			"frame": "Keret"
+			"frame": "Keret",
+			"primary": "Elsődleges szín",
+			"secondary": "Másodlagos szín",
+			"mode": {
+				"label": "Színmód",
+				"monochrome": "Monokróm",
+				"polychrome": "Polikróm",
+				"word_random": "Szavanként véletlen"
+			}
 		},
 		"mode": {
 			"h2": "Mód",
@@ -47,7 +60,31 @@ let TRANSLATION_HU = {
 			"scrollingtext": "Futó felirat",
 			"rainbow": "Szivárvány",
 			"color-change": "Szín megváltoztatása",
+			"fire": "Tűz",
 			"symbol": "Szimbólum"
+		},
+		"birthdays": {
+			"h1": "Születésnapok",
+			"help": "Születésnapokon 5 percenként tűzijáték-animáció jelenik meg.\n" +
+				"A kompatibilis óratípusok az animáció alatt az idő helyett a „Happy Birthday” szavakat mutatják. Dátumformátum MM-DD\n",
+			"dates": {
+				"save": "Mentés",
+				"date0": {
+					"label": "1. dátum:"
+				},
+				"date1": {
+					"label": "2. dátum:"
+				},
+				"date2": {
+					"label": "3. dátum:"
+				},
+				"date3": {
+					"label": "4. dátum:"
+				},
+				"date4": {
+					"label": "5. dátum:"
+				}
+			}
 		},
 		"transition": {
 			"h2": "Átmenet",
@@ -64,7 +101,6 @@ let TRANSLATION_HU = {
 				"balls": "Labdák",
 				"firework": "Tűzijáték",
 				"snake": "Kígyó",
-				"colored": "Színes",
 				"random": "Véletlen"
 			},
 			"duration": {
@@ -72,15 +108,6 @@ let TRANSLATION_HU = {
 				"short": "Rövid",
 				"medium": "Közepes",
 				"long": "Hosszú"
-			},
-			"color": {
-				"label": "Színátmenet",
-				"off": "Ki",
-				"words": "Színes szavak",
-				"letters": "Színes betűk"
-			},
-			"speed": {
-				"label": "Sebesség"
 			},
 			"demo": {
 				"label": "Bemutató"
@@ -92,8 +119,8 @@ let TRANSLATION_HU = {
 			"scrollingtext": "Futó felirat",
 			"save": "Mentés",
 			"speed": "Sebesség",
-			"leds": "LED-ek száma",
-			"position": "Pozíció"
+			"fire-cooling": "Hűlés ",
+			"fire-sparking": "Szikrázás "
 		}
 	},
 
@@ -105,10 +132,8 @@ let TRANSLATION_HU = {
 			"variant": "Óraváltozatok kiválasztása",
 			"de-10-11": "🇩🇪 10 × 11",
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternatív",
-			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternatív keretek",
 			"de-10-11-clock": "🇩🇪 10 × 11 óra",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
-			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero keretek",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
 			"de-10-11-bayerisch": "🇩🇪 10 × 11 bajor",
 			"de-10-11-schwaebisch": "🇩🇪 10 × 11 sváb stílus",
@@ -117,7 +142,7 @@ let TRANSLATION_HU = {
 			"de-11-11-v2": "🇩🇪 11 × 11 verzió 2",
 			"de-11-11-v3": "🇩🇪 11 × 11 (panbachi)",
 			"de-13-13": "🇩🇪 13 × 13",
-			"de-22-11-weather": "🇩🇪 10 × 11 időjárás",
+			"de-22-11-weather": "🇩🇪 22 × 11 időjárás",
 			"de-16-8": "🇩🇪 16 × 8",
 			"de-16-18": "🇩🇪 16 × 18",
 			"de-08-08": "🇩🇪 8 × 8",
@@ -130,14 +155,21 @@ let TRANSLATION_HU = {
 			"es-08-08-cuarto": "🇪🇸 8 × 8 Negyed órák",
 			"it-10-11": "🇮🇹 10 × 11",
 			"hu-10-10": "🇭🇺 10 x 10",
+			"ch-10-11": "🇨🇭 10 x 11",
+			"ro-10-11": "🇷🇴 10 x 11",
+			"fr-10-11": "🇫🇷 10 x 11",
 			"se-10-11": "🇸🇪 10 × 11",
 			"ru-10-11": "🇷🇺 10 × 11",
 			"bn-9-8": "🇧🇩 9 × 8",
 			"tr-10-11": "🇹🇷 10 × 11",
 			"ch-10-11-v2": "🇨🇭 10 x 11 verzió 2",
+			"ch-10-11-zh": "🇨🇭 10 x 11 Züridütsch",
 			"invert-min-dir": "Percszámláló-irány megfordítása",
 			"mirror-vertically": "Szövegóra függőleges tükrözése",
 			"mirror-horizontally": "Szövegóra vízszintes tükrözése",
+			"extra-led-per-row": "Extra LED hozzáadása soronként",
+			"flip-horz-vert": "Elrendezés vízszintes és függőleges tükrözése",
+			"meander-rows": "Sorok meander alakban elrendezve",
 			"buildtype": "Felépítés",
 			"normal": "Minden LED egy betűnek felel meg",
 			"doubleResM1": "Minden második LED egy betűnek felel meg",
@@ -147,7 +179,7 @@ let TRANSLATION_HU = {
 		},
 		"language": {
 			"h2": "Nyelv",
-			"hide-it-is": "„Mutasd meg a 'Ez a'“",
+			"hide-it-is": "Mutasd meg az „Ez a” szöveget",
 			"it-is-off": "Off",
 			"it-is-hourly": "Óránként",
 			"it-is-half-hourly": "Félóránként",
@@ -175,11 +207,11 @@ let TRANSLATION_HU = {
 			"off": "Ki",
 			"normal-4-leds": "Normál (4 LED)",
 			"normal-7-leds": "Normál (7 LED)",
-			"edges": "Szegélyek",
 			"in-words": "Szavakkal"
 		},
 		"seconds": {
 			"h2": "Másodpercek",
+			"led-count": "LED-ek száma a másodperc-keretben (0 = kikapcsolva)",
 			"in-border": "Másodperc mutatása keretben",
 			"off": "Ki",
 			"point": "Pont",
@@ -201,7 +233,9 @@ let TRANSLATION_HU = {
 		"status": {
 			"h2": "Állapot",
 			"label": "Kapcsolódás állapota",
-			"connect": "Kapcsolódás"
+			"connect": "Kapcsolódás",
+			"disconnect": "Kapcsolat bontása",
+			"connecting": "Csatlakozás ..."
 		},
 		"led-type": {
 			"h2": "LED-típus",
@@ -336,7 +370,17 @@ let TRANSLATION_HU = {
 			"client-id": "Ügyfélazonosító",
 			"topic": "Téma",
 			"save": "Beállítás mentése",
-			"discovery": "HA Discovery küldése"
+			"discovery": "HA Discovery küldése",
+			"status": "Állapot",
+			"status-not-configured": "Nincs beállítva",
+			"status-connected": "Csatlakozva",
+			"status-disconnected": "Nincs csatlakozva",
+			"status-server-not-found": "A szerver nem található",
+			"status-unreachable": "A szerver nem elérhető",
+			"status-bad-credentials": "Elutasítva: hibás belépési adatok",
+			"status-unauthorized": "Elutasítva: nincs jogosultság",
+			"status-bad-client-id": "Elutasítva: érvénytelen kliensazonosító",
+			"status-refused": "A szerver elutasította"
 		}
 	},
 
@@ -345,7 +389,6 @@ let TRANSLATION_HU = {
 		"text-general": "Ennek a Szövegórának a szoftverje <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (Állapot 2019)</a> szoftverje alapján készült, amelyet a közösség <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>GitHub-on</a> fejleszt tovább.",
 		"text-update": "A szoftver frissítése lehetséges, ehhez kérjük <a href='update' onmouseover='javascript:event.target.port=81'>váltson az Update-oldalra</a>.",
 		"text-license": "Ez a projekt Open-Source-licensz alatt van a <span lang='en'>3-Clause BSD License</span> alapján.",
-		"software": "Könyvtárak és szoftver",
 		"debug": "Debug-Kiadás"
 	},
 	"footer": {

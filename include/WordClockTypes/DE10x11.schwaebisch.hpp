@@ -27,11 +27,15 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasDreiviertel() override { return true; }
+    virtual bool hasDreiviertel() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    virtual bool hasTwenty() override { return false; }
+
+    //------------------------------------------------------------------------------
+
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:

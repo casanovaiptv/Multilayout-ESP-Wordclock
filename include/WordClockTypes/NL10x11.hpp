@@ -27,11 +27,11 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasSpecialWordBeen() override { return true; }
+    virtual bool hasSpecialWordBeen() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:

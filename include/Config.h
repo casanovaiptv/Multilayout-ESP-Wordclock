@@ -38,11 +38,6 @@
 // 10 rows, each 11 LED's per row + 4 LED's for minutes, with modified
 // layout for extra words in the matrix from the Github user @dbambus
 //
-// #define DEFAULT_LAYOUT Ger10x11AlternativeFrame
-// 10 rows, each 11 LED's per row + 4 LED's (minutes)+ 48 LED's (seconds) in a
-// Frame around with modified layout for extra words in the matrix from the
-// Github user @dbambus
-//
 // #define DEFAULT_LAYOUT Ger10x11Clock
 // 10 rows, each 11 LED's per row + 4 LED's for minutes, with the layout
 // from the original manufacturer
@@ -66,10 +61,6 @@
 //
 // #define DEFAULT_LAYOUT Ger11x11V3
 // 11 rows, each 11 LED's per row. Layout for panbachi/wordclock plate design
-//
-// #define DEFAULT_LAYOUT Ger11x11Frame
-// Same Layout as Ger11x11, but with additional LED's to illuminate the frame
-// from the side
 //
 // #define DEFAULT_LAYOUT Ger13x13
 // 13 rows, 13 LEDs per row
@@ -154,6 +145,10 @@
 // #define DEFAULT_LAYOUT  Ch10x11V2
 // 10 rows, 11 LED's per row + 4 LED's for minutes, with modified
 // layout for the Swiss German language with "Gsi" option
+//
+// #define DEFAULT_LAYOUT  Ch10x11ZH
+// 10 rows, 11 LED's per row + 4 LED's for minutes, with a layout for the
+// Zurich dialect of Swiss German (Zueriduetsch)
 
 /**********************/
 /*      Romanian      */
@@ -191,7 +186,7 @@
 /*       Bengali      */
 /**********************/
 //
-// #define DEFAULT_LAYOUT  Bn9x7
+// #define DEFAULT_LAYOUT  BN9x8
 // 8 rows, 9 LED's per row + 4 LED's for minutes, with modified
 // layout for the Bengali language
 //
@@ -217,9 +212,9 @@
  * of your choice. DEFAULT_BRIGHTNESS defines the default brightness (percent)
  * of the LEDs, if no other value is defined yet.
  *
- * Valid values for DEFAULT_LEDTYPE [Brg, Grb, Rgb, Rbg, Gbr, Grbw]
+ * Valid values for DEFAULT_LEDTYPE [Brg, Grb, Rgb, Rbg, Bgr, Grbw]
  * Valid values for WHITE_LEDTYPE [WarmWhite, NeutralWhite, ColdWhite]
- * Valid values for DEFAULT_HUE [integer 0-255]
+ * Valid values for DEFAULT_HUE [integer 0-359, hue in degrees]
  * Valid values for DEFAULT_BRIGHTNESS [one of these: 0, 20, 40, 60, 80, 100]
  */
 #define DEFAULT_LEDTYPE Grb
@@ -256,9 +251,8 @@
  *  BuildTypeDef::DoubleRes, BuildTypeDef::TrippleRes,
  *  BuildTypeDef::QuadRes]
  *
- * Changing this setting in the web interface writes the new value to EEPROM.
- * Restart the clock afterwards so the LED strip allocation matches the selected
- * build type.
+ * Changing this setting in the web interface writes the new value to EEPROM
+ * and resizes the LED strip immediately; no restart is needed.
  */
 #define DEFAULT_BUILDTYPE BuildTypeDef::Normal
 
@@ -313,7 +307,7 @@
  *
  * Valid values [0 ... 65536]
  */
-#define SERNR 440
+#define SERNR 500
 //--------------------------------------------------------------------------
 // Toggle Serial DEBUG Output
 //--------------------------------------------------------------------------
@@ -389,7 +383,7 @@
  * Valid values BOOT_SHOWIP [true, false]
  * Valid values BOOT_LEDSWEEP [true, false]
  */
-#define BOOT_SHOWIP false
+#define BOOT_SHOWIP true
 #define BOOT_LEDSWEEP false
 
 //--------------------------------------------------------------------------
@@ -453,3 +447,18 @@
 // #define MQTT_USER "user"
 // #define MQTT_PASSWORD "password"
 // #define MQTT_TOPIC "Wordclock"
+
+//--------------------------------------------------------------------------
+// Manual OpenWeatherMap Settings
+//--------------------------------------------------------------------------
+/*
+ * Preconfigure the weather forecast of the Ger22x11Weather layout. The values
+ * are used whenever the clock has no city ID or API key stored, so they also
+ * reach a clock that is already set up. Values entered in the web interface
+ * take precedence. Keep your API key out of commits.
+ *
+ * Valid values OWM_CITY_ID [OpenWeatherMap city ID, up to 8 digits, as string]
+ * Valid values OWM_API_KEY [up to 34 characters as string]
+ */
+// #define OWM_CITY_ID "YOUR_CITY"
+// #define OWM_API_KEY "YOUR_API_KEY"

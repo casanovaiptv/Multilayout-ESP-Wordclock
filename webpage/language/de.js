@@ -1,9 +1,8 @@
 let TRANSLATION_DE_DE = {
 	"title": "Wortuhr",
-
 	"menu": {
-		"aria-show-menu": "Menü anzeigen",
-		"aria-hide-menu": "Menü ausblenden",
+		"more": "Mehr",
+		"view": "Anzeige",
 		"language": {
 			"label": "Sprache",
 			"de": "🇩🇪 Deutsch",
@@ -15,28 +14,42 @@ let TRANSLATION_DE_DE = {
 			"ru": "🇷🇺 Russisch"
 		}
 	},
-
 	"connection-lost": {
 		"button": "Verbinden",
 		"text": "Die Verbindung zur Wortuhr wurde unterbrochen."
 	},
-
 	"reboot-recommended": {
 		"button": "Neu starten",
 		"text": "Ein Neustart wird empfohlen, um die geänderte Einstellung zu übernehmen."
 	},
-
+	"status": {
+		"online": "Verbunden",
+		"offline": "Getrennt"
+	},
 	"colors": {
 		"h1": "Farben",
-		"with-background": "Mit Hintergrundfarbe"
+		"hint": "Änderungen werden sofort an die Uhr gesendet.",
+		"target": "Was einfärben?",
+		"wheel": "Farbrad",
+		"temperature": "Farbtemperatur",
+		"brightness": "Helligkeit",
+		"favorites": "Favoriten",
+		"off": "Ausschalten"
 	},
-
 	"functions": {
 		"h1": "Funktionen",
 		"color": {
 			"foreground": "Vordergrund",
 			"background": "Hintergrund",
-			"frame": "Rahmen"
+			"frame": "Rahmen",
+			"primary": "Primärfarbe",
+			"secondary": "Sekundärfarbe",
+			"mode": {
+				"label": "Farbmodus",
+				"monochrome": "Monochrom",
+				"polychrome": "Polychrom",
+				"word_random": "Wortweise zufällig"
+			}
 		},
 		"mode": {
 			"h2": "Modus",
@@ -47,6 +60,7 @@ let TRANSLATION_DE_DE = {
 			"scrollingtext": "Laufschrift",
 			"rainbow": "Regenbogen",
 			"color-change": "Farbwechsel",
+			"fire": "Feuer",
 			"symbol": "Symbol"
 		},
 		"birthdays": {
@@ -87,7 +101,6 @@ let TRANSLATION_DE_DE = {
 				"balls": "Bälle",
 				"firework": "Feuerwerk",
 				"snake": "Schlange",
-				"colored": "Bunt",
 				"random": "Zufällig"
 			},
 			"duration": {
@@ -95,15 +108,6 @@ let TRANSLATION_DE_DE = {
 				"short": "kurz",
 				"medium": "mittel",
 				"long": "lang"
-			},
-			"color": {
-				"label": "Farbübergang",
-				"off": "Aus",
-				"words": "Bunte Wörter",
-				"letters": "Bunte Buchstaben"
-			},
-			"speed": {
-				"label": "Geschwindigkeit"
 			},
 			"demo": {
 				"label": "Demo"
@@ -115,8 +119,8 @@ let TRANSLATION_DE_DE = {
 			"scrollingtext": "Lauftext",
 			"save": "Speichern",
 			"speed": "Geschwindigkeit ",
-			"leds": "Anzahl LEDs ",
-			"position": "Position "
+			"fire-cooling": "Abkühlung ",
+			"fire-sparking": "Funkenflug "
 		}
 	},
 
@@ -128,10 +132,8 @@ let TRANSLATION_DE_DE = {
 			"variant": "Wahl der Uhrvariante",
 			"de-10-11": "🇩🇪 10 × 11",
 			"de-10-11-alt": "🇩🇪 10 × 11 Alternativ",
-			"de-10-11-alt-frame": "🇩🇪 10 × 11 Alternativer Rahmen",
 			"de-10-11-clock": "🇩🇪 10 × 11 Uhr",
 			"de-10-11-nero": "🇩🇪 10 × 11 Nero",
-			"de-10-11-nero-frame": "🇩🇪 10 × 11 Nero Rahmen",
 			"de-10-11-mrrioes": "🇩🇪 10 × 11 mrrioes",
 			"de-10-11-bayerisch": "🇩🇪 10 × 11 Bayerisch",
 			"de-10-11-schwaebisch": "🇩🇪 10 × 11 Schwäbisch",
@@ -140,7 +142,7 @@ let TRANSLATION_DE_DE = {
 			"de-11-11-v2": "🇩🇪 11 × 11 Version 2",
 			"de-11-11-v3": "🇩🇪 11 × 11 (panbachi)",
 			"de-13-13": "🇩🇪 13 × 13",
-			"de-22-11-weather": "🇩🇪 10 × 11 Wetter",
+			"de-22-11-weather": "🇩🇪 22 × 11 Wetter",
 			"de-16-8": "🇩🇪 16 × 8",
 			"de-16-18": "🇩🇪 16 × 18",
 			"de-08-08": "🇩🇪 8 × 8",
@@ -159,6 +161,7 @@ let TRANSLATION_DE_DE = {
 			"se-10-11": "🇸🇪 10 × 11",
 			"ru-10-11": "🇷🇺 10 × 11",
 			"ch-10-11-v2": "🇨🇭 10 x 11 Version 2",
+			"ch-10-11-zh": "🇨🇭 10 x 11 Züridütsch",
 			"bn-9-8": "🇧🇩 9 × 8",
 			"tr-10-11": "🇹🇷 10 × 11",
 			"invert-min-dir": "Minutenzählrichtung invertieren",
@@ -176,7 +179,7 @@ let TRANSLATION_DE_DE = {
 		},
 		"language": {
 			"h2": "Sprache",
-			"hide-it-is": "„'Es ist' Anzeige“",
+			"hide-it-is": "„Es ist“-Anzeige",
 			"it-is-off": "Aus",
 			"it-is-hourly": "Stündlich",
 			"it-is-half-hourly": "Halbstündlich",
@@ -204,11 +207,11 @@ let TRANSLATION_DE_DE = {
 			"off": "Aus",
 			"normal-4-leds": "Normal (4 LEDs)",
 			"normal-7-leds": "Normal (7 LEDs)",
-			"edges": "Ecken",
 			"in-words": "In Worten"
 		},
 		"seconds": {
 			"h2": "Sekunden",
+			"led-count": "Anzahl LED's im Sekundenrahmen (0 = deaktiviert)",
 			"in-border": "Sekundenanzeige im Rahmen",
 			"off": "Aus",
 			"point": "Punkt",
@@ -230,7 +233,9 @@ let TRANSLATION_DE_DE = {
 		"status": {
 			"h2": "Status",
 			"label": "Verbindungsstatus",
-			"connect": "Verbinden"
+			"connect": "Verbinden",
+			"disconnect": "Trennen",
+			"connecting": "Verbinden ..."
 		},
 		"led-type": {
 			"h2": "LED-Typ",
@@ -365,7 +370,17 @@ let TRANSLATION_DE_DE = {
 			"client-id": "Client-ID",
 			"topic": "Topic",
 			"save": "Einstellungen Speichern",
-			"discovery": "Sende HA Discovery"
+			"discovery": "Sende HA Discovery",
+			"status": "Status",
+			"status-not-configured": "Nicht konfiguriert",
+			"status-connected": "Verbunden",
+			"status-disconnected": "Nicht verbunden",
+			"status-server-not-found": "Server nicht gefunden",
+			"status-unreachable": "Server nicht erreichbar",
+			"status-bad-credentials": "Abgelehnt: falsche Zugangsdaten",
+			"status-unauthorized": "Abgelehnt: keine Berechtigung",
+			"status-bad-client-id": "Abgelehnt: ungültige Client-ID",
+			"status-refused": "Vom Server abgelehnt"
 		}
 	},
 	"about": {
@@ -373,7 +388,6 @@ let TRANSLATION_DE_DE = {
 		"text-general": "Die Software dieser Wortuhr basiert auf der Wortuhr von <a href='https://web.archive.org/web/20180422160812/http://www.ulrichradig.de/home/index.php/projekte/wort-uhr-neu'>Ulrich Radig (Stand 2019)</a> und wird nun <a href='https://github.com/ESPWortuhr/Wortuhr/graphs/contributors'>von der Community</a> weiterentwickelt auf <a href='https://github.com/ESPWortuhr/Wortuhr'>GitHub</a>.",
 		"text-update": "Ein Update der Software ist möglich, dazu bitte <a href='update' onmouseover='javascript:event.target.port=81'>auf die Update-Seite wechseln</a>.",
 		"text-license": "Dieses Projekt ist Open-Source-lizenziert unter der <span lang='en'>3-Clause BSD License</span>.",
-		"software": "Bibliotheken und Software",
 		"debug": "Debug-Ausgabe"
 	},
 	"footer": {

@@ -28,46 +28,15 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual const void getMinuteArray(uint16_t *returnArr,
-                                      uint8_t col) override {
-
-        uint16_t numPixelsWordMatrix = rowsWordMatrix() * colsWordMatrix();
-
-        if (G.buildTypeDef == BuildTypeDef::DoubleResM1) {
-            numPixelsWordMatrix = rowsWordMatrix() * (colsWordMatrix() * 2 - 1);
-        }
-
-        for (uint8_t i = 0; i < 4; i++) {
-            switch (col) {
-            case 0: // LEDs for "LED4x" minute display
-                returnArr[i] = numPixelsWordMatrix - (7 - i);
-                break;
-
-            case 1: // LEDs for "LED7x" minute display
-                returnArr[i] = numPixelsWordMatrix - (7 - (i * 2));
-                break;
-
-            case 2: // LEDs fuer "Corners" type minute display
-                returnArr[i] = numPixelsWordMatrix + i;
-                break;
-
-            default:
-                break;
-            }
-        }
-    };
+    virtual uint8_t rowsWordMatrix() override { return 11; };
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t rowsWordMatrix() override { return 11; };
+    virtual bool hasDreiviertel() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasDreiviertel() override { return true; }
-
-    //------------------------------------------------------------------------------
-
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:

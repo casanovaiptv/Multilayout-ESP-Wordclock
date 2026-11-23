@@ -25,19 +25,13 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual void setFrontMatrixPixel(const int row, const int col,
-                                     bool state = true) {
-        if (state) {
-            frontMatrix[row] |= 1UL << col;
-        } else {
-            frontMatrix[row] &= ~(1UL << col);
-        }
-    }
+    // setFrontMatrixPixel() is inherited from ClockType: this layout used to
+    // carry a byte-identical copy, which would bypass the base class bounds
+    // check.
 
     //------------------------------------------------------------------------------
 
-    virtual const uint16_t getFrontMatrixIndex(uint8_t row,
-                                               uint8_t col) override {
+    virtual uint16_t getFrontMatrixIndex(uint8_t row, uint8_t col) override {
 
         row *= 2;
         uint8_t newColsWordMatrix = colsWordMatrix();
@@ -53,41 +47,32 @@ public:
         }
         uint16_t returnValue = col + (row * newColsWordMatrix);
 
-        if (returnValue > numPixelsWordMatrix) {
-            Serial.println(
-                "[ERROR] getFrontMatrixIndex() returnValue out of Bounds");
-        }
-
-        return returnValue;
+        return checkedFrontMatrixIndex(returnValue, numPixelsWordMatrix);
     };
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t rowsWordMatrix() override { return 8; };
+    virtual uint8_t rowsWordMatrix() override { return 8; };
 
     //------------------------------------------------------------------------------
 
-    virtual const uint8_t colsWordMatrix() override { return 16; };
+    virtual uint8_t colsWordMatrix() override { return 16; };
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasLed4x() override { return false; }
+    virtual bool hasLed4x() override { return false; }
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasMinuteInWords() override { return true; }
+    virtual bool supportsSecondsFrame() override { return false; }
 
     //------------------------------------------------------------------------------
 
-    virtual const void getMinuteArray(uint16_t *returnArr, uint8_t col) {
-        for (uint8_t i = 0; i < 4; i++) {
-            returnArr[i] = 256 + i;
-        }
-    };
+    virtual bool hasMinuteInWords() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:

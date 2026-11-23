@@ -7,6 +7,7 @@
  *      Author: Andreas
  */
 
+#include "WordClockState.h" // LedColorVariants (Grb, Bgr, ...)
 #include <NeoPixelBus.h>
 
 //------------------------------------------------------------------------------
@@ -113,7 +114,6 @@ public:
             color.R = pgm_read_byte(p++);
             color.B = pgm_read_byte(p);
             break;
-            break;
         case Rbg:
             color.R = pgm_read_byte(p++);
             color.B = pgm_read_byte(p++);
@@ -130,6 +130,7 @@ public:
     }
 };
 
-uint8_t NeoMultiFeature::_colortype = DEFAULT_LEDTYPE; // init static member
+// Definition of the static member lives in NeoMultiFeature.cpp so it is emitted
+// in exactly one translation unit.
 
 //------------------------------------------------------------------------------

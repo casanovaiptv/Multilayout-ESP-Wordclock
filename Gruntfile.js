@@ -5,9 +5,9 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 
 		settings: {
-			tempDirectory: ".pio/build/webpage",
+			tempDirectory: process.env.PIO_WEBPAGE_TEMP || ".pio/build/webpage",
 			srcDirectory: "webpage",
-			target: "include/WebPageContent.gen.inc"
+			target: process.env.PIO_WEBPAGE_TARGET || "include/WebPageContent.gen.inc"
 		},
 
 		clean: {
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 
 		eslint: {
 			options: {
-				overrideConfigFile: "eslintrc.json"
+				overrideConfigFile: "eslint.config.js"
 			},
 			files: [
 				"Gruntfile.js",
@@ -96,6 +96,45 @@ module.exports = function(grunt) {
 		},
 
 		replace: {
+			// The <option> list of the front layout select is generated from
+			// CLOCK_TYPES_LIST in include/WordClockState.h, so that a new clock
+			// type only has to be registered in that single place.
+			frontlayout: {
+				options: {
+					patterns: [{
+						match: /<!-- FRONTLAYOUTPLACEHOLDER -->/,
+						replacement: function() {
+							const fs = require("fs");
+							// Join the macro line continuations first, otherwise an
+							// entry wrapped by clang-format would be missed.
+							const header = fs.readFileSync("include/WordClockState.h", "utf8").replace(/\\\s*\n\s*/g, " ");
+							const config = fs.readFileSync("include/Config.h", "utf8");
+
+							const defaultLayout = (config.match(/^#define\s+DEFAULT_LAYOUT\s+(\w+)/m) || [])[1];
+							const entry = /X\(\s*(\w+)\s*,\s*(\d+)\s*,\s*\w+\s*,\s*"([\w-]+)"\s*\)/g;
+
+							let options = [];
+							let match;
+							while ((match = entry.exec(header)) !== null) {
+								const [, name, id, key] = match;
+								const selected = name === defaultLayout ? " selected" : "";
+								options.push("<option value=\"" + id + "\" data-i18next=\"view.front." + key + "\"" + selected + "></option>");
+							}
+
+							if (options.length === 0) {
+								throw new Error("No clock types found in include/WordClockState.h");
+							}
+							grunt.log.writeln("Generated " + options.length + " front layout options");
+							return options.join("\n");
+						}
+					}]
+				},
+				files: [{
+					expand: true,
+					overwrite: true,
+					src: "<%= settings.tempDirectory %>/index.html"
+				}]
+			},
 			pioenv: {
 				options: {
 					patterns: [{
@@ -132,11 +171,6 @@ module.exports = function(grunt) {
 					dest: "<%= settings.tempDirectory %>"
 				}, {
 					expand: true,
-					cwd: "node_modules/@jaames/iro/dist/",
-					src: ["iro.min.js"],
-					dest: "<%= settings.tempDirectory %>"
-				}, {
-					expand: true,
 					cwd: "node_modules/i18next",
 					src: ["i18next.min.js"],
 					dest: "<%= settings.tempDirectory %>"
@@ -144,14 +178,6 @@ module.exports = function(grunt) {
 					expand: true,
 					cwd: "node_modules/i18next-browser-languagedetector",
 					src: ["i18nextBrowserLanguageDetector.min.js"],
-					dest: "<%= settings.tempDirectory %>"
-				}]
-			},
-			minified_css_files: {
-				files: [{
-					expand: true,
-					cwd: "node_modules/purecss/build",
-					src: ["*-min.css"],
 					dest: "<%= settings.tempDirectory %>"
 				}]
 			},
@@ -203,7 +229,6 @@ module.exports = function(grunt) {
 	});
 
 	// Linters
-	grunt.loadNpmTasks("grunt-stylelint");
 	grunt.loadNpmTasks("grunt-eslint");
 	grunt.loadNpmTasks("grunt-htmllint");
 	grunt.loadNpmTasks("grunt-contrib-htmlmin");
@@ -216,18 +241,37 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-replace");
 	grunt.loadNpmTasks("grunt-contrib-compress");
 
+	grunt.registerMultiTask("stylelint", function() {
+		const done = this.async();
+		const files = this.filesSrc;
+		require("stylelint").lint({ files, formatter: "string" }).then((result) => {
+			if (result.report) {
+				grunt.log.writeln(result.report);
+			}
+			if (result.errored) {
+				done(false);
+				return;
+			}
+			grunt.log.ok(files.length + " file(s) lint free.");
+			done();
+		}, (error) => {
+			grunt.log.error(error.message);
+			done(false);
+		});
+	});
+
 	grunt.registerTask("lint", ["eslint", "stylelint", "htmllint"]);
 
 	grunt.registerTask("build", [
 		"lint",
 		"clean:temp",
 		"cssmin",
-		"copy:minified_css_files",
 		"terser",
 		"copy:minified_js_files",
 		"copy:index",
 		"copy:icons",
 		"version:index",
+		"replace:frontlayout",
 		"replace:pioenv",
 		"assets_inline",
 		"htmlmin",

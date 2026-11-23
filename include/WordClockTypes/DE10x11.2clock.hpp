@@ -28,11 +28,11 @@ public:
 
     //------------------------------------------------------------------------------
 
-    virtual const bool hasDreiviertel() override { return true; }
+    virtual bool hasDreiviertel() override { return true; }
 
     //------------------------------------------------------------------------------
 
-    void show(FrontWord word) override {
+    void drawWord(FrontWord word) override {
         switch (word) {
 
         case FrontWord::es_ist:
@@ -129,10 +129,6 @@ public:
 
         case FrontWord::hour_12:
             setFrontMatrixWord(8, 0, 4);
-            break;
-
-        case FrontWord::funk:
-            setFrontMatrixWord(3, 4, 7);
             break;
 
         default:
