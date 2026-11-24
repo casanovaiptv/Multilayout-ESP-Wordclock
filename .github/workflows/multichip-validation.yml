@@ -22,6 +22,8 @@ jobs:
           for board in ESP32 ESP32C3 ESP8266; do
             rm -f include/WebPageContent.gen.inc
             pio run -e "$board"
+            mkdir -p "firmware-staging/$board"
+            cp .pio/build/"$board"/*.bin "firmware-staging/$board/"
           done
           python docs/install/package_all.py
           cd dist/webinstaller-esp32
@@ -39,6 +41,6 @@ jobs:
             rm -f include/WebPageContent.gen.inc
             pio run -e "$board"
             before=$(stat -c%s ".pio/build/$board/firmware.bin")
-            after=$(stat -c%s "$GITHUB_WORKSPACE/.pio/build/$board/firmware.bin")
+            after=$(stat -c%s "$GITHUB_WORKSPACE/firmware-staging/$board/firmware.bin")
             echo "$board: baseline $before bytes, candidate $after bytes, delta $((after-before))" | tee -a "$GITHUB_STEP_SUMMARY"
           done
