@@ -48,6 +48,7 @@ jobs:
           python docs/install/package_esp32.py
       - name: Add installer to existing Jekyll site
         run: |
+          sudo chown -R "$(id -u):$(id -g)" _site
           mkdir -p _site/install
           cp dist/webinstaller-esp32/* _site/install/
       - name: Upload artifact
