@@ -11,7 +11,7 @@ out.mkdir(parents=True, exist_ok=True)
 version = json.loads((root / "package.json").read_text())["version"]
 builds = []
 for env, family, chip in [("ESP32", "ESP32", 0), ("ESP32C3", "ESP32-C3", 5), ("ESP8266", "ESP8266", None)]:
-    directory = root / ".pio/build" / env
+    directory = root / "firmware-staging" / env
     firmware = directory / "firmware.bin"
     data = firmware.read_bytes()
     if len(data) < 24 or data[0] != 0xe9:
