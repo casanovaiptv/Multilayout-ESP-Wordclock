@@ -3,29 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESP Wordclock – ESP32 Webinstaller</title>
+  <title>ESP Wordclock – Webinstaller</title>
   <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
   <style>
-    :root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}
-    body{background:#10141e;color:#f3f5fb;margin:0;padding:2rem 1rem}
-    main{max-width:680px;margin:auto}
-    .panel{background:#1d2432;border:1px solid #354155;border-radius:16px;padding:1.5rem}
-    small{color:#b4c0d1} a{color:#9bc9ff}
-    esp-web-install-button{display:block;margin:1.25rem 0}
-  </style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;color:#eaf3ff;background:#080e19}*{box-sizing:border-box}body{margin:0;padding:clamp(16px,5vw,48px);background:radial-gradient(ellipse at top,#16334b,transparent 65%);min-height:100vh}main{max-width:760px;margin:auto}header{display:flex;align-items:center;gap:18px;margin:20px 0 32px}.logo{display:grid;grid-template-columns:repeat(5,8px);gap:5px;padding:15px;border:1px solid #36536a;border-radius:18px;background:#111e30}.logo i{width:8px;height:8px;border-radius:2px;background:#294052}.logo i:nth-child(3n),.logo i:nth-child(5n){background:#5eead4;box-shadow:0 0 8px #5eead466}h1{font-size:clamp(24px,5vw,38px);margin:0;letter-spacing:-1px}p{line-height:1.6;color:#b5c6da}.eyebrow{font-size:11px;letter-spacing:3px;color:#5eead4;font-weight:700}.panel{background:#111c2c;border:1px solid #2b4258;border-radius:22px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 60px #0004;margin-bottom:20px}.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:20px 0}.board{padding:16px;border:1px solid #30465c;border-radius:12px;background:#162539}.board small{display:block;margin-top:6px}small{color:#a8bbd1}a{color:#80d9f4}button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:12px;padding:15px 24px;background:#5eead4;color:#09202a;width:100%}esp-web-install-button{display:block;margin:20px 0}details{border-top:1px solid #30465c;padding:16px 0}summary{cursor:pointer;font-weight:600}#status{border-left:3px solid #5eead4;padding-left:12px}.downloads a{display:block;padding:8px 0}footer{font-size:13px;color:#a8bbd1;text-align:center} [hidden]{display:none!important}
+</style>
 </head>
 <body>
 <main>
-  <h1>ESP Wordclock – ESP32</h1>
-  <p>USB-Webinstaller für klassische ESP32-Boards (`esp32dev`). Nicht für ESP32-C3 oder ESP8266.</p>
-  <section class="panel">
+  <header><div class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div><div class="eyebrow">FIRMWARE CENTER</div><h1>ESP Wordclock</h1><small>Multilayout · USB Webinstaller</small></div></header>
+<section class="panel"><div class="eyebrow">FIRMWARE <span id="version">…</span></div><h2>Installiere deine Wortuhr</h2><p>Verbinde deinen Controller per USB. Aktuell verfügbar: klassischer ESP32.</p><div class="boards"><div class="board"><strong>ESP32</strong><small>NodeMCU / DevKit</small></div><div class="board"><strong>ESP32-C3</strong><small>In Vorbereitung</small></div><div class="board"><strong>ESP8266</strong><small>In Vorbereitung</small></div></div>
     <p id="status" role="status">Firmware-Paket wird geprüft …</p>
     <div id="installer" hidden>
-      <esp-web-install-button manifest="./manifest.json"></esp-web-install-button>
+      <esp-web-install-button manifest="./manifest.json"><button slot="activate">USB verbinden &amp; installieren</button><span slot="unsupported">Bitte Chrome oder Edge am Computer verwenden.</span><span slot="not-allowed">USB-Zugriff nicht verfügbar.</span></esp-web-install-button>
     </div>
     <small>Nur in einem kompatiblen Chromium-Browser über HTTPS oder localhost. Vor dem ersten Einsatz die Firmware auf Testhardware prüfen und Einstellungen sichern. Kein automatisches vollständiges Löschen vorgesehen.</small>
   </section>
-  <p><a href="https://github.com/casanovaiptv/Multilayout-ESP-Wordclock">Projekt auf GitHub</a></p>
+  <section class="panel"><h2>Firmware-Downloads</h2><div id="downloads" class="downloads"></div><details><summary>Verbindungsprobleme? BOOT / RESET</summary><p>USB trennen, BOOT gedrückt halten, USB wieder anschließen und BOOT loslassen. Danach erneut verbinden. Alternativ BOOT halten, EN kurz drücken und BOOT loslassen. Serielle Monitore schließen.</p></details><details><summary>Browser und Sicherheit</summary><p>Chrome oder Edge am Computer verwenden. Einstellungen vor dem Flashen sichern. Neue Controller zunächst auf Testhardware prüfen.</p></details></section><footer><a href="https://github.com/casanovaiptv/Multilayout-ESP-Wordclock">GitHub · Quellcode</a></footer>
 </main>
 <script>
 (async () => {
@@ -34,16 +28,24 @@
     const response = await fetch("./manifest.json", {cache:"no-store"});
     if (!response.ok) throw new Error("Manifest nicht verfügbar");
     const manifest = await response.json();
-    const build = manifest.builds?.find(b => b.chipFamily === "ESP32");
-    if (!build || !Array.isArray(build.parts) || build.parts.length !== 4) {
-      throw new Error("ESP32-Manifest unvollständig");
-    }
-    for (const part of build.parts) {
+    const builds = manifest.builds;
+    if (!Array.isArray(builds) || builds.length !== 1 || builds[0].chipFamily !== "ESP32" || builds[0].parts?.length !== 4) throw new Error("ESP32-Manifest unvollständig");
+    for (const part of builds[0].parts) {
       if (!/^[-\w]+\.bin$/.test(part.path)) throw new Error("Ungültiger Image-Pfad");
       const file = await fetch("./" + part.path, {method:"HEAD"});
       if (!file.ok) throw new Error("Firmware-Datei fehlt: " + part.path);
     }
-    status.textContent = "ESP32-Firmware-Paket vorhanden. Installation nur auf einem passenden ESP32 durchführen.";
+    document.getElementById("version").textContent = /^\d+\.\d+\.\d+/.test(manifest.version) ? "v" + manifest.version : "Build " + manifest.version;
+    for (const build of builds) {
+      for (const part of build.parts) {
+        const link = document.createElement("a");
+        link.href = "./" + part.path;
+        link.download = "";
+        link.textContent = build.chipFamily + " · " + part.path.split("/").pop();
+        document.getElementById("downloads").appendChild(link);
+      }
+    }
+    status.textContent = "ESP32-Firmware verfügbar.";
     document.getElementById("installer").hidden = false;
   } catch (error) {
     status.textContent = "Installation gesperrt: " + error.message + ". Zuerst das vollständige Build-Paket bereitstellen.";
