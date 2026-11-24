@@ -1,0 +1,44 @@
+name: Multi-chip validation
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install platformio
+      - name: Build all boards
+        run: |
+          for board in ESP32 ESP32C3 ESP8266; do
+            rm -f include/WebPageContent.gen.inc
+            pio run -e "$board"
+          done
+          python docs/install/package_all.py
+          cd dist/webinstaller-esp32
+          sha256sum -c SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: multichip-installer-test
+          path: dist/webinstaller-esp32/
+      - name: Compare baseline firmware sizes
+        run: |
+          git fetch origin main
+          git worktree add --detach /tmp/baseline origin/main
+          cd /tmp/baseline
+          for board in ESP32 ESP32C3 ESP8266; do
+            rm -f include/WebPageContent.gen.inc
+            pio run -e "$board"
+            before=$(stat -c%s ".pio/build/$board/firmware.bin")
+            after=$(stat -c%s "$GITHUB_WORKSPACE/.pio/build/$board/firmware.bin")
+            echo "$board: baseline $before bytes, candidate $after bytes, delta $((after-before))" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
