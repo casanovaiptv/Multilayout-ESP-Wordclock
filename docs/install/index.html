@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESP Wordclock – ESP32 Webinstaller</title>
+  <title>ESP Wordclock – Webinstaller</title>
   <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
   <style>
     :root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}
@@ -16,8 +16,8 @@
 </head>
 <body>
 <main>
-  <h1>ESP Wordclock – ESP32</h1>
-  <p>USB-Webinstaller für klassische ESP32-Boards (`esp32dev`). Nicht für ESP32-C3 oder ESP8266.</p>
+  <h1>ESP Wordclock – Webinstaller</h1>
+  <p>USB-Webinstaller für ESP32, ESP32-C3 und ESP8266. Testversion: nur auf Testhardware verwenden.</p>
   <section class="panel">
     <p id="status" role="status">Firmware-Paket wird geprüft …</p>
     <div id="installer" hidden>
@@ -34,16 +34,16 @@
     const response = await fetch("./manifest.json", {cache:"no-store"});
     if (!response.ok) throw new Error("Manifest nicht verfügbar");
     const manifest = await response.json();
-    const build = manifest.builds?.find(b => b.chipFamily === "ESP32");
-    if (!build || !Array.isArray(build.parts) || build.parts.length !== 4) {
+    const builds = manifest.builds;
+    if (!Array.isArray(builds) || builds.length !== 3 || !["ESP32","ESP32-C3","ESP8266"].every(chip => builds.some(b => b.chipFamily === chip && b.parts?.length === (chip === "ESP8266" ? 1 : 4)))) {
       throw new Error("ESP32-Manifest unvollständig");
     }
-    for (const part of build.parts) {
-      if (!/^[-\w]+\.bin$/.test(part.path)) throw new Error("Ungültiger Image-Pfad");
+    for (const part of builds.flatMap(b => b.parts)) {
+      if (!/^(ESP32|ESP32C3|ESP8266)\/[-\w]+\.bin$/.test(part.path)) throw new Error("Ungültiger Image-Pfad");
       const file = await fetch("./" + part.path, {method:"HEAD"});
       if (!file.ok) throw new Error("Firmware-Datei fehlt: " + part.path);
     }
-    status.textContent = "ESP32-Firmware-Paket vorhanden. Installation nur auf einem passenden ESP32 durchführen.";
+    status.textContent = "Firmware-Pakete vorhanden. Der Chip wird automatisch erkannt.";
     document.getElementById("installer").hidden = false;
   } catch (error) {
     status.textContent = "Installation gesperrt: " + error.message + ". Zuerst das vollständige Build-Paket bereitstellen.";
