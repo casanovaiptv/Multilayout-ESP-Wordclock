@@ -70,6 +70,7 @@ module.exports = function(grunt) {
 		},
 
 		terser: {
+			options: { compress: { passes: 3 } },
 			dev: {
 				files: [{
 					expand: true,
