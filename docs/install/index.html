@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESP Wordclock – ESP32 Webinstaller</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js"></script>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif}
+    body{background:#10141e;color:#f3f5fb;margin:0;padding:2rem 1rem}
+    main{max-width:680px;margin:auto}
+    .panel{background:#1d2432;border:1px solid #354155;border-radius:16px;padding:1.5rem}
+    small{color:#b4c0d1} a{color:#9bc9ff}
+    esp-web-install-button{display:block;margin:1.25rem 0}
+  </style>
+</head>
+<body>
+<main>
+  <h1>ESP Wordclock – ESP32</h1>
+  <p>USB-Webinstaller für klassische ESP32-Boards (`esp32dev`). Nicht für ESP32-C3 oder ESP8266.</p>
+  <section class="panel">
+    <p id="status" role="status">Firmware-Paket wird geprüft …</p>
+    <div id="installer" hidden>
+      <esp-web-install-button manifest="./manifest.json"></esp-web-install-button>
+    </div>
+    <small>Nur in einem kompatiblen Chromium-Browser über HTTPS oder localhost. Vor dem ersten Einsatz die Firmware auf Testhardware prüfen und Einstellungen sichern. Kein automatisches vollständiges Löschen vorgesehen.</small>
+  </section>
+  <p><a href="https://github.com/casanovaiptv/Multilayout-ESP-Wordclock">Projekt auf GitHub</a></p>
+</main>
+<script>
+(async () => {
+  const status = document.getElementById("status");
+  try {
+    const response = await fetch("./manifest.json", {cache:"no-store"});
+    if (!response.ok) throw new Error("Manifest nicht verfügbar");
+    const manifest = await response.json();
+    const build = manifest.builds?.find(b => b.chipFamily === "ESP32");
+    if (!build || !Array.isArray(build.parts) || build.parts.length !== 4) {
+      throw new Error("ESP32-Manifest unvollständig");
+    }
+    for (const part of build.parts) {
+      if (!/^[-\w]+\.bin$/.test(part.path)) throw new Error("Ungültiger Image-Pfad");
+      const file = await fetch("./" + part.path, {method:"HEAD"});
+      if (!file.ok) throw new Error("Firmware-Datei fehlt: " + part.path);
+    }
+    status.textContent = "ESP32-Firmware-Paket vorhanden. Installation nur auf einem passenden ESP32 durchführen.";
+    document.getElementById("installer").hidden = false;
+  } catch (error) {
+    status.textContent = "Installation gesperrt: " + error.message + ". Zuerst das vollständige Build-Paket bereitstellen.";
+  }
+})();
+</script>
+</body>
+</html>
