@@ -1,4 +1,36 @@
 let TRANSLATION_EN_US = {
+	"hardware": {
+		"title": "Hardware",
+		"ring": "Seconds ring",
+		"ring-enable": "Enable seconds ring",
+		"count": "Number of LEDs",
+		"offset": "Start offset",
+		"reverse": "Counterclockwise",
+		"animation": "Animation",
+		"calibration-help": "Save the ring settings before starting calibration. Only the zero-position LED lights up.",
+		"calibrate": "Calibrate",
+		"save-offset": "Save offset",
+		"cancel": "Cancel",
+		"power": "Current limit",
+		"power-enable": "Enable current limit",
+		"supply": "Power supply (A)",
+		"reserve": "Reserve (A)",
+		"power-note": "Calculated LED current. Use electrical protection appropriate for the installation.",
+		"wps": "WPS button",
+		"wps-enable": "Enable WPS button",
+		"pin": "Button GPIO",
+		"wps-note": "Connect the button to ground. Hold for 3 seconds, then start WPS on the router.",
+		"apply": "Save hardware settings",
+		"applied": "Settings saved",
+		"led-status": "Estimated LED current",
+		"limiting": "Limiting active",
+		"invalid": "Check the settings and try again.",
+		"storage": "Could not save to flash.",
+		"gpio": "GPIO is unavailable or already assigned.",
+		"busy": "Calibration is already active.",
+		"offline": "Connect to the clock to edit hardware settings."
+	},
+
 	"title": "Wordclock",
 
 	"menu": {

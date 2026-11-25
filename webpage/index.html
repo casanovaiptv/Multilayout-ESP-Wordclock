@@ -123,6 +123,7 @@
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="main" data-i18next="colors.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="functions" data-i18next="functions.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="frontoptions" data-i18next="view.h1"></a></li>
+                <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="hardware" data-i18next="hardware.title"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="settings" data-i18next="settings.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="smart-home" data-i18next="smart-home.h1"></a></li>
                 <li class="pure-menu-item" role="none"><a href="#" class="pure-menu-link" role="menuitem" data-navigation="about" data-i18next="about.h1"></a></li>
@@ -560,12 +561,10 @@
                                 <option value="10" data-i18next="view.front.de-08-08-viertel"></option>
                                 <option value="11" data-i18next="view.front.de-10-11" selected></option>
                                 <option value="12" data-i18next="view.front.de-10-11-alt"></option>
-                                <option value="13" data-i18next="view.front.de-10-11-alt-frame"></option>
                                 <option value="14" data-i18next="view.front.de-10-11-bayerisch"></option>
                                 <option value="15" data-i18next="view.front.de-10-11-clock"></option>
                                 <option value="16" data-i18next="view.front.de-10-11-mrrioes"></option>
                                 <option value="17" data-i18next="view.front.de-10-11-nero"></option>
-                                <option value="18" data-i18next="view.front.de-10-11-nero-frame"></option>
                                 <option value="19" data-i18next="view.front.de-10-11-schwaebisch"></option>
                                 <option value="20" data-i18next="view.front.de-11-11"></option>
                                 <option value="21" data-i18next="view.front.de-11-11-schwaebisch"></option>
@@ -707,22 +706,6 @@
                     </form>
                 </div>
 
-                <!-- Specific UHR169 Start-->
-                <div class="box specific-layout-4">
-                    <h2 data-i18next="view.seconds.h2"></h2>
-                    <form class="pure-form pure-form-aligned">
-                        <div class="pure-control-group">
-                            <label for="show-seconds" data-i18next="view.seconds.in-border"></label><select name="show-seconds" id="show-seconds" size="1">
-                                <option value="0" selected data-i18next="view.seconds.off"></option>
-                                <option value="1" data-i18next="view.seconds.point"></option>
-                                <option value="2" data-i18next="view.seconds.sector"></option>
-                                <option value="3" data-i18next="view.seconds.revolving-sector"></option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <!-- Specific UHR169 End-->
-
                 <div class="box">
                     <h2 data-i18next="view.boot.h2"></h2>
                     <form class="pure-form pure-form-aligned">
@@ -759,6 +742,64 @@
                         </fieldset>
                     </form>
                 </div>
+            </section>
+
+            <section class="pure-u-24-24 section section-hardware">
+                <header class="header"><h1 data-i18next="hardware.title"></h1></header>
+                <form id="hardware-form" class="pure-form">
+                    <div class="hardware-grid">
+                        <fieldset class="box">
+                            <h2 data-i18next="hardware.ring"></h2>
+                            <label class="hardware-toggle"><input id="ring-enabled" type="checkbox"> <span data-i18next="hardware.ring-enable"></span></label>
+                            <div class="hardware-fields">
+                                <label><span data-i18next="hardware.count"></span><input id="ring-count" type="number" min="1" max="200" value="60" required></label>
+                                <label><span data-i18next="hardware.offset"></span><input id="ring-offset" type="number" min="0" max="59" value="8" required></label>
+                            </div>
+                            <label class="hardware-toggle"><input id="ring-reverse" type="checkbox"> <span data-i18next="hardware.reverse"></span></label>
+                            <label class="hardware-select"><span data-i18next="hardware.animation"></span>
+                                <select id="show-seconds">
+                                    <option value="0" data-i18next="view.seconds.off"></option>
+                                    <option value="1" data-i18next="view.seconds.point"></option>
+                                    <option value="2" data-i18next="view.seconds.sector"></option>
+                                    <option value="3" data-i18next="view.seconds.revolving-sector"></option>
+                                </select>
+                            </label>
+                            <p class="hardware-note" data-i18next="hardware.calibration-help"></p>
+                            <button id="ring-calibrate" type="button" class="pure-button" data-hardware-action="start" data-i18next="hardware.calibrate" disabled></button>
+                            <div id="ring-calibration" hidden>
+                                <output id="ring-preview" aria-live="polite"></output>
+                                <div class="hardware-actions">
+                                    <button type="button" class="pure-button" data-hardware-action="minus" aria-label="−">−</button>
+                                    <button type="button" class="pure-button" data-hardware-action="plus" aria-label="+">+</button>
+                                    <button type="button" class="pure-button" data-hardware-action="save" data-i18next="hardware.save-offset"></button>
+                                    <button type="button" class="pure-button" data-hardware-action="cancel" data-i18next="hardware.cancel"></button>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="hardware-side">
+                            <fieldset class="box">
+                                <h2 data-i18next="hardware.power"></h2>
+                                <label class="hardware-toggle"><input id="power-limit" type="checkbox"> <span data-i18next="hardware.power-enable"></span></label>
+                                <div class="hardware-fields">
+                                    <label><span data-i18next="hardware.supply"></span><input id="power-supply" type="number" min="0.001" max="60" step="0.001" value="2" required></label>
+                                    <label><span data-i18next="hardware.reserve"></span><input id="power-reserve" type="number" min="0" max="60" step="0.001" value="0.3" required></label>
+                                </div>
+                                <p class="hardware-note" data-i18next="hardware.power-note"></p>
+                                <output id="power-estimate"></output>
+                            </fieldset>
+                            <fieldset class="box">
+                                <h2 data-i18next="hardware.wps"></h2>
+                                <label class="hardware-toggle"><input id="wps-enabled" type="checkbox"> <span data-i18next="hardware.wps-enable"></span></label>
+                                <label class="hardware-select"><span data-i18next="hardware.pin"></span><input id="wps-pin" type="number" min="0" max="255" step="1" value="255" required></label>
+                                <p class="hardware-note" data-i18next="hardware.wps-note"></p>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="box hardware-actions">
+                        <button id="hardware-apply" type="submit" class="pure-button" data-i18next="hardware.apply" disabled></button>
+                        <output id="hardware-status" aria-live="polite"></output>
+                    </div>
+                </form>
             </section>
 
             <section class="pure-u-24-24 section section-settings">
