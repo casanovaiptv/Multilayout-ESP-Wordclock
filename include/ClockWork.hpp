@@ -2,6 +2,7 @@
 #include "HardwareButtonController.hpp"
 #include "I2CBus.h"
 #include "NeoMultiFeature.hpp"
+#include "LedGeometry.h"
 #include "OpenWeatherMap.h"
 #include "SensitiveData.h"
 #include "TransitionTypes/Transition.h"
@@ -10,8 +11,6 @@
 #include "math.h"
 #include <Arduino.h>
 #include <BH1750.h>
-
-#define MAX_LED_COUNT 300
 
 BH1750 lightMeter;
 OpenWMap weather;
@@ -287,17 +286,26 @@ ClockType *ClockWork::getPointer(uint8_t type) {
 //------------------------------------------------------------------------------
 
 void ClockWork::initLedStrip(uint8_t num) {
-    NeoMultiFeature::setColortype(num);
-    const uint16_t ledCount = MAX_LED_COUNT * getLedsPerLetter(G.buildTypeDef);
+    const auto geometry = ledGeometry(
+        *usedClockType, ringCount(), hardware.has(hardwareSettings::LegacyWiring));
+    const uint16_t ledCount = geometry.transmitted;
 
     if (activeLedPin != G.hardwarePins.led || activeLedColorType != num ||
         activeLedCount != ledCount) {
+        if (activeLedStrip) {
+            activeLedStrip->clearAll();
+            activeLedStrip->show();
+        }
         deleteActiveLedStrip();
         activeLedPin = G.hardwarePins.led;
         activeLedColorType = num;
         activeLedCount = ledCount;
     }
 
+    ringStart = geometry.ringStart;
+    physicalLedCount = geometry.installed;
+    legacyMinuteWiring = geometry.legacyMinutes;
+    NeoMultiFeature::setColortype(num);
     if (activeLedStrip != nullptr) {
         return;
     }
@@ -807,8 +815,14 @@ void ClockWork::showMinute(uint8_t min) {
     min %= 5;
 
     /* saving corosponding minutePixelArray */
-    usedClockType->getMinuteArray(minutePixelArray,
-                                  determineWhichMinuteVariant());
+    if (legacyMinuteWiring) {
+        for (uint8_t i = 0; i < 4; ++i) {
+            minutePixelArray[i] = 110 + i;
+        }
+    } else {
+        usedClockType->getMinuteArray(minutePixelArray,
+                                      determineWhichMinuteVariant());
+    }
     /* Reseting minute byte */
     minuteArray = 0;
     if (usedClockType->hasMinuteInWords() && min > 0) {
@@ -1625,7 +1639,7 @@ void ClockWork::loop(struct tm &tm) {
         config["hasDreiviertel"] = usedClockType->hasDreiviertel();
         config["hasTwenty"] = usedClockType->hasTwenty();
         config["hasWeatherLayout"] = usedClockType->hasWeatherLayout();
-        config["hasSecondsFrame"] = usedClockType->hasSecondsFrame();
+        config["hasSecondsFrame"] = ringCount() != 0;
         config["hasMinuteInWords"] = usedClockType->hasMinuteInWords();
         config["hasSpecialWordHappyBirthday"] =
             usedClockType->hasSpecialWordHappyBirthday();
@@ -1675,7 +1689,7 @@ void ClockWork::loop(struct tm &tm) {
         config["colortype"] = G.Colortype;
         config["hasSpecialWordHappyBirthday"] =
             usedClockType->hasSpecialWordHappyBirthday();
-        config["hasSecondsFrame"] = usedClockType->hasSecondsFrame();
+        config["hasSecondsFrame"] = ringCount() != 0;
         config["prog"] = G.prog;
         config["bitmapSymbol"] = static_cast<uint8_t>(G.bitmapSymbol);
 
@@ -1739,7 +1753,11 @@ void ClockWork::loop(struct tm &tm) {
         // G.param1 sets new buildtype
         Serial.printf("Clock Buildtype: %u\n", G.param1);
 
+        if (G.param1 > static_cast<uint8_t>(BuildTypeDef::QuadRes)) {
+            break;
+        }
         G.buildTypeDef = static_cast<BuildTypeDef>(G.param1);
+        initLedStrip(G.Colortype);
         eeprom::write();
         led.clear();
         parametersChanged = true;
@@ -1759,6 +1777,7 @@ void ClockWork::loop(struct tm &tm) {
     case COMMAND_SET_WHITETYPE:
     case COMMAND_SET_TIME_MANUAL:
     case COMMAND_SET_LAYOUT_VARIANT: {
+        initLedStrip(G.Colortype);
         eeprom::write();
         led.clear();
         memset(frameArray, false, sizeof(frameArray));
@@ -1797,6 +1816,11 @@ void ClockWork::loop(struct tm &tm) {
                            "defaults");
             setDefaultHardwarePins();
             i2cBus::setDefaultPins(G.i2cSdaPin, G.i2cSclPin);
+        }
+
+        if (hardware.has(hardwareSettings::WpsEnabled) &&
+            !wpsPinAllowed(hardware.wpsPin)) {
+            hardware.flags &= ~hardwareSettings::WpsEnabled;
         }
 
         Serial.printf("Hardware LED pin: GPIO%u\n", G.hardwarePins.led);
@@ -1839,25 +1863,33 @@ void ClockWork::loop(struct tm &tm) {
             break;
         }
 
-        eeprom::write();
         led.clear();
         led.show();
-        delay(10);
-        Serial.printf("ClockType: %u\n", G.clockTypeDef);
-
-        usedClockType = getPointer(G.clockTypeDef);
-        resetMinVariantIfNotAvailable();
-
-        checkForValidLanguageVariant();
-
-        delete secondsFrame;
-        secondsFrame = nullptr;
-
-        if (usedClockType->numPixelsFrameMatrix() != 0) {
-            secondsFrame =
-                new SecondsFrame(usedClockType->numPixelsFrameMatrix());
-            G.progInit = true;
+        const uint8_t canonical = hardwareSettings::canonicalLayout(G.clockTypeDef);
+        ClockType *next = getPointer(canonical);
+        if (canonical != G.clockTypeDef) {
+            hardware.flags |= hardwareSettings::RingEnabled |
+                              hardwareSettings::LegacyWiring;
+            hardware.ringCount = SecondsRingMapping::DefaultCount;
+            hardware.ringOffset = SecondsRingMapping::DefaultOffset;
+        } else if (next != usedClockType) {
+            hardware.flags &= ~hardwareSettings::LegacyWiring;
         }
+        G.clockTypeDef = canonical;
+        const bool dimensionsChanged = next->rowsWordMatrix() != usedClockType->rowsWordMatrix() ||
+                                       next->colsWordMatrix() != usedClockType->colsWordMatrix();
+        usedClockType = next;
+        if (dimensionsChanged) {
+            delete transition;
+            transition = new Transition(next->rowsWordMatrix(), next->colsWordMatrix());
+        }
+        resetMinVariantIfNotAvailable();
+        checkForValidLanguageVariant();
+        initLedStrip(G.Colortype);
+        if (dimensionsChanged) transition->init();
+        secondsFrame.reset();
+        G.progInit = true;
+        eeprom::write();
 
         parametersChanged = true;
         break;

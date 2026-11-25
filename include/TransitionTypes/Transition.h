@@ -141,6 +141,7 @@ protected:
     uint8_t lastTransitionColorize;
 
     uint8_t maxRows, maxCols;
+    bool firstSave = true;
     uint16_t sizeofColumn;
     RgbfColor **old;
     RgbfColor **act;

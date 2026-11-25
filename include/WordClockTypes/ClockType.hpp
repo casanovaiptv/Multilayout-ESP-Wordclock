@@ -194,6 +194,8 @@ public:
 
     virtual const uint16_t getFrameMatrixIndex(uint16_t index) { return 0; }
 
+    virtual uint16_t minimumMatrixPixels() { return 0; }
+
     // --- Language & General Properties ---
 
     virtual const bool isRomanLanguage() { return false; }
@@ -309,8 +311,8 @@ public:
             returnValue =
                 row + rowsWordMatrix() * (newColsWordMatrix - 1 - col);
             if (G.layoutVariant[ExtraLedPerRow]) {
-                returnValue += colsWordMatrix() - 1 - col;
-                numPixelsWordMatrix += colsWordMatrix() - 1;
+                returnValue += newColsWordMatrix - 1 - col;
+                numPixelsWordMatrix += newColsWordMatrix - 1;
             }
         }
 
@@ -323,16 +325,15 @@ public:
     };
 
     virtual const void getMinuteArray(uint16_t *returnArr, uint8_t col) {
-        uint16_t numPixelsWordMatrix = rowsWordMatrix() * colsWordMatrix();
-
-        if (G.buildTypeDef == BuildTypeDef::DoubleResM1) {
-            numPixelsWordMatrix = rowsWordMatrix() * (colsWordMatrix() * 2 - 1);
-        }
+        const uint8_t physicalColumns = G.buildTypeDef == BuildTypeDef::DoubleResM1
+                                            ? colsWordMatrix() * 2 - 1
+                                            : colsWordMatrix();
+        uint16_t numPixelsWordMatrix = rowsWordMatrix() * physicalColumns;
         if (G.layoutVariant[ExtraLedPerRow]) {
             if (G.layoutVariant[FlipHorzVert] == false) {
                 numPixelsWordMatrix += rowsWordMatrix() - 1;
             } else {
-                numPixelsWordMatrix += colsWordMatrix() - 1;
+                numPixelsWordMatrix += physicalColumns - 1;
             }
         }
 

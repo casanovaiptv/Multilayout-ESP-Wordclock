@@ -316,24 +316,17 @@ void Led::setbySecondArray(ColorPosition colorPosition) {
     HsbColor displayedColor =
         getColorbyPositionWithAppliedBrightness(colorPosition);
 
-    const uint8_t offesetSecondsFrame =
-        (usedClockType->numPixelsFrameMatrix() / 8);
-
-    for (uint8_t i = 0; i < usedClockType->numPixelsFrameMatrix(); i++) {
+    for (uint16_t i = 0; i < ringCount(); ++i) {
+        const uint16_t index = ringStart + SecondsRingMapping::physicalIndex(
+            i, ringCount(), hardware.ringOffset,
+            hardware.has(hardwareSettings::RingReverse));
         if (frameArray[i]) {
-            if (i <
-                usedClockType->numPixelsFrameMatrix() - offesetSecondsFrame) {
-                setPixel(usedClockType->getFrameMatrixIndex(i) +
-                             offesetSecondsFrame,
-                         displayedColor);
-            } else {
-                setPixel(usedClockType->getFrameMatrixIndex(i) -
-                             usedClockType->numPixelsFrameMatrix() +
-                             offesetSecondsFrame,
-                         displayedColor);
-            }
+            setPixel(index, displayedColor);
+        } else {
+            clearPixel(index);
         }
     }
+
 }
 
 //------------------------------------------------------------------------------
@@ -493,8 +486,8 @@ inline void Led::clearRow(uint8_t row) {
 //------------------------------------------------------------------------------
 
 inline void Led::clearMinArray() {
-    for (uint16_t i = minutePixelArray[0]; i <= minutePixelArray[3]; i++) {
-        clearPixel(i);
+    for (uint16_t index : minutePixelArray) {
+        clearPixel(index);
     }
     minuteArray = 0;
 }
@@ -517,8 +510,8 @@ inline void Led::clearFrontExeptofFontspace(uint8_t offsetRow) {
 //------------------------------------------------------------------------------
 
 inline void Led::clearFrame() {
-    for (uint16_t i = 0; i < usedClockType->numPixelsFrameMatrix(); i++) {
-        clearPixel(usedClockType->getFrameMatrixIndex(i));
+    for (uint16_t i = 0; i < ringCount(); i++) {
+        clearPixel(ringStart + i);
     }
 }
 

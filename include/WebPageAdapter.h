@@ -51,6 +51,7 @@ public:
                     "Connection: close\r\n"
                     "\r\n",
                     SIZE_OF_FAVICON);
+            client->tcp->write(buf);
             sendHtmlCode(client, (const uint8_t *)favicon, SIZE_OF_FAVICON);
         } else if (url.equals("/")) {
             // ------------------------------------
@@ -168,6 +169,11 @@ bool parseColor(uint8_t *payload, size_t length) {
 
 //------------------------------------------------------------------------------
 
+namespace hardwareWeb {
+void disconnected(uint8_t client);
+void handle(uint8_t client, const uint8_t *payload, size_t length);
+}
+
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
                     size_t length) {
     // Disable Accesspoint Mode Disable Timer on Web Event
@@ -181,6 +187,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
 
     switch (type) {
     case WStype_DISCONNECTED: {
+        hardwareWeb::disconnected(num);
         Serial.printf("[%u] Disconnected!\n", num);
         break;
     }
@@ -191,6 +198,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
         break;
     }
     case WStype_TEXT: {
+        if (length && payload[0] == '{') {
+            hardwareWeb::handle(num, payload, length);
+            return;
+        }
         Serial.printf("[%u] get Text: %s\n", length, payload);
 
         if (length < 3) {

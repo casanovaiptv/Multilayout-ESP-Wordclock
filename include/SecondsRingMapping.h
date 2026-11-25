@@ -3,7 +3,13 @@
 
 namespace SecondsRingMapping {
 constexpr uint16_t DefaultCount = 60;
+constexpr uint16_t MaxCount = 200;
 constexpr uint16_t DefaultOffset = 8;
+
+inline uint16_t stepOffset(uint16_t offset, uint16_t count, bool forward) {
+    if (!count) return 0;
+    return (uint32_t(offset) + (forward ? 1 : count - 1)) % count;
+}
 
 // Map a logical sector to the physical ring, independent of front layout.
 inline uint16_t physicalIndex(uint16_t sector, uint16_t count,

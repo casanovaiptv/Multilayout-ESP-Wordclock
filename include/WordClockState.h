@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#include "HardwareSettings.h"
 #include "version.gen.h"
 
 #define PAYLOAD_LENGTH 30
@@ -254,6 +255,14 @@ struct GLOBAL {
     uint8_t i2cSclPin;
 };
 GLOBAL G = {};
+hardwareSettings::Settings hardware;
+uint16_t ringStart = 0;
+uint16_t physicalLedCount = 0;
+bool legacyMinuteWiring = false;
+
+inline uint16_t ringCount() {
+    return hardware.has(hardwareSettings::RingEnabled) ? hardware.ringCount : 0;
+}
 
 // Brightness related variables
 float ledGain = DEFAULT_BRIGHTNESS;
@@ -261,7 +270,6 @@ bool bh1750Initialized = false;
 bool autoBrightUsingBH1750 = false;
 
 uint8_t _second = 0;
-uint8_t _secondFrame = 0;
 uint8_t _minute = 0;
 uint8_t _hour = 0;
 uint8_t lastSecond = 0;
@@ -272,7 +280,7 @@ uint32_t lastFrontMatrix[MAX_ROW_SIZE] = {0};
 uint8_t minuteArray = 0; /* Using a byte as a per bit array */
 uint8_t lastMinuteArray = 0;
 uint16_t minutePixelArray[4] = {0};
-bool frameArray[200] = {false};
+bool frameArray[SecondsRingMapping::MaxCount] = {false};
 bool parametersChanged = false;
 bool layoutChanged = false;
 bool colorChangedByWebsite = false;

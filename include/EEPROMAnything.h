@@ -6,12 +6,8 @@
 namespace eeprom {
 
 /*
- * Legacy raw-config storage.
- *
- * The public read()/write() API intentionally remains unchanged for now: the
- * complete global config struct G is persisted byte-for-byte. Future storage
- * work should migrate this to a versioned config format or a packed config
- * struct with explicit migration logic.
+ * Keep the original byte layout at address zero. New settings occupy a
+ * separately versioned record below the power-cycle byte.
  */
 
 namespace detail {
@@ -137,15 +133,26 @@ template <class T> int readAnything(int ee, T &value) {
 
 //------------------------------------------------------------------------------
 
-void write() {
+bool write() {
     writeAnything(0, G);
-    EEPROM.commit();
+    writeAnything(hardwareSettings::StorageAddress, hardware.sealed());
+    return EEPROM.commit();
+}
+
+// Migrate without interpreting or rewriting any other legacy setting.
+bool migrateHardware() {
+    const uint8_t canonical = hardwareSettings::canonicalLayout(G.clockTypeDef);
+    if (hardware.storedValid() && canonical == G.clockTypeDef) return false;
+    hardware = hardwareSettings::migrate(G.clockTypeDef).sealed();
+    G.clockTypeDef = canonical;
+    return true;
 }
 
 //------------------------------------------------------------------------------
 
 void read() {
     readAnything(0, G);
+    readAnything(hardwareSettings::StorageAddress, hardware);
 
 #if GENERAL_VERBOSE
     detail::printConfig();
