@@ -284,9 +284,8 @@ a:visited:hover {
         float: right;
     }
 
-    .layout.active {
-        position: relative;
-        left: 170px;
+    .layout.active .main {
+        opacity: 0.55;
     }
 }
 
