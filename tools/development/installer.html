@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordclock Development · Testinstaller</title>
+<style>
+:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #0b1525; color: #e6f2fa }
+* { box-sizing: border-box }
+body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at top, #174055, transparent 65%); padding: clamp(1rem, 5vw, 4rem) }
+main { max-width: 52rem; margin: auto }
+header { margin-bottom: 2rem }
+h1 { font-size: clamp(2rem, 6vw, 3.25rem); margin: .35rem 0 }
+p { line-height: 1.6; color: #b8c9dd }
+a, .version { color: #72e5d9 }
+.card { background: #142438; border: 1px solid #2b4258; padding: clamp(1rem, 3vw, 2rem); border-radius: 1rem; margin-block: 1rem }
+.card h2 { margin-top: 0 }
+select, button { font: inherit; min-height: 2.75rem; padding: .5rem 1rem; color: inherit; border-radius: .6rem; border: 1px solid #375469; background: #0e1e30 }
+button { cursor: pointer; background: #68ebd8; color: #0e202a; font-weight: 650 }
+button:disabled { opacity: .5; cursor: default }
+label { display: flex; align-items: center; flex-wrap: wrap; gap: .7rem }
+:focus-visible { outline: 3px solid #70e8d8; outline-offset: 3px }
+.warning { border-left: .2rem solid #ffcf85; padding-left: .75rem; color: #ffdda2 }
+#downloads { padding-left: 1rem }
+#downloads li { padding-block: .25rem }
+[hidden] { display: none !important }
+</style>
+</head>
+<body>
+<main>
+    <header>
+        <span class="version" id="version">Development</span>
+        <h1>Wordclock Testinstaller</h1>
+        <p>Entwicklungsfirmware für Tests auf ESP8266, ESP32 und ESP32-C3.</p>
+        <a href="./demo/index.html">Interaktive Browser-Demo öffnen</a>
+    </header>
+    <section class="card">
+        <h2>Per USB installieren</h2>
+        <label>ESP-Modell
+            <select id="board">
+                <option value="esp8266">ESP8266 · NodeMCU v2</option>
+                <option value="esp32" selected>ESP32 · Dev Module</option>
+                <option value="esp32c3">ESP32-C3 · DevKitC-02</option>
+            </select>
+        </label>
+        <p class="warning">Eine vollständige Flash-Löschung entfernt WLAN-Daten und Uhr-Einstellungen. Für ein normales Update lasse „Erase device“ ausgeschaltet. Bei abweichender Partitionierung kann nach Sicherung eine Neuinstallation mit Löschen erforderlich sein.</p>
+        <p id="status" role="status" aria-live="polite">Firmware wird geprüft …</p>
+        <esp-web-install-button hidden id="installer">
+            <button slot="activate" type="button">USB verbinden und installieren</button>
+            <span slot="unsupported">Für USB-Installation Chrome oder Edge am Computer öffnen.</span>
+            <span slot="not-allowed">USB-Zugriff ist gesperrt. Öffne den Installer in einem eigenen Browser-Tab.</span>
+        </esp-web-install-button>
+        <p>Verwende ein USB-Datenkabel. Falls kein serieller Port angezeigt wird, prüfe den USB-Treiber und schließe Programme, die den Port belegen.</p>
+    </section>
+    <section class="card">
+        <h2>Firmware herunterladen</h2>
+        <ul id="downloads"></ul>
+        <a href="./wordclock-development.zip" download>Komplettpaket mit allen Plattformen und Demo (ZIP)</a>
+    </section>
+</main>
+<script type="module">
+const boards = {
+    esp8266: ["ESP8266", { "firmware.bin": 0 }],
+    esp32: ["ESP32", { "bootloader.bin": 0x1000, "partitions.bin": 0x8000, "boot_app0.bin": 0xE000, "firmware.bin": 0x10000 }],
+    esp32c3: ["ESP32-C3", { "bootloader.bin": 0, "partitions.bin": 0x8000, "boot_app0.bin": 0xE000, "firmware.bin": 0x10000 }]
+};
+const board = document.getElementById("board");
+const status = document.getElementById("status");
+const version = document.getElementById("version");
+const installer = document.getElementById("installer");
+const downloads = document.getElementById("downloads");
+let loadId = 0;
+
+async function metadata(path) {
+    const response = await fetch(path, { cache: "no-store" });
+    if (!response.ok) throw new Error("Datei fehlt: " + path);
+    return response.json();
+}
+
+function download(path, label) {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = path;
+    link.download = "";
+    link.textContent = label;
+    item.append(link);
+    downloads.append(item);
+}
+
+async function loadBoard() {
+    const id = ++loadId;
+    const [family, offsets] = boards[board.value];
+    const directory = "./firmware/" + board.value + "/";
+    installer.hidden = true;
+    downloads.replaceChildren();
+    status.textContent = "Firmware für " + family + " wird geprüft …";
+    try {
+        const [build, manifest] = await Promise.all([metadata("./build.json"), metadata(directory + "manifest.json")]);
+        const partList = manifest.builds?.[0]?.parts;
+        if (!/^\d+\.\d+\.\d+-dev\.\d+$/.test(build.version) || !/^[a-f0-9]{12}$/.test(build.commit) ||
+            manifest.version !== build.version || manifest.new_install_prompt_erase !== false ||
+            manifest.builds.length !== 1 || manifest.builds[0].chipFamily !== family ||
+            !Array.isArray(partList) || partList.length !== Object.keys(offsets).length ||
+            new Set(partList.map(part => part.path)).size !== partList.length ||
+            partList.some(part => !Object.hasOwn(offsets, part.path) || offsets[part.path] !== part.offset)) {
+            throw new Error("Firmware und Flash-Adressen passen nicht zum gewählten Modell");
+        }
+        await Promise.all(partList.map(async part => {
+            const response = await fetch(directory + part.path, { method: "HEAD" });
+            if (!response.ok) throw new Error("Firmware-Datei fehlt: " + part.path);
+        }));
+        if (id !== loadId) return;
+        version.textContent = build.version + " · " + build.commit;
+        partList.forEach(part => download(directory + part.path, part.path + " · 0x" + part.offset.toString(16).toUpperCase()));
+        download(directory + "SHA256SUMS.txt", "SHA-256-Prüfsummen");
+        if (!window.isSecureContext || !("serial" in navigator)) {
+            status.textContent = "Firmware verfügbar. Die USB-Installation benötigt Chrome oder Edge und HTTPS.";
+            return;
+        }
+        installer.setAttribute("manifest", directory + "manifest.json");
+        await import("https://unpkg.com/esp-web-tools@10.1.0/dist/web/install-button.js");
+        if (id !== loadId) return;
+        installer.hidden = false;
+        status.textContent = family + " · Bereit für die USB-Installation";
+    } catch (error) {
+        if (id === loadId) status.textContent = "Installation nicht verfügbar. " + error.message;
+    }
+}
+
+board.addEventListener("change", loadBoard);
+loadBoard();
+</script>
+</body>
+</html>

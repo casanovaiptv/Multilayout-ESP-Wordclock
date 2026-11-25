@@ -1,0 +1,26 @@
+.demo-panel {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr minmax(10rem, 17rem);
+    align-items: start;
+    margin-top: 3.5rem;
+}
+
+.demo-panel details { margin-top: 0.75rem; }
+.demo-panel summary { cursor: pointer; }
+.demo-panel canvas {
+    width: 100%;
+    max-width: 17rem;
+    border: 1px solid #2b4258;
+    border-radius: 14px;
+    background: #080f19;
+}
+
+@media (width >= 41em) {
+    .demo-panel { margin-top: 1rem; }
+}
+
+@media (width < 41em) {
+    .demo-panel { grid-template-columns: 1fr; }
+    .demo-panel canvas { justify-self: center; }
+}

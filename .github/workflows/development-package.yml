@@ -1,0 +1,31 @@
+name: Wordclock development package
+
+on:
+  push:
+    branches: [dev/wordclock-ui-hardware]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  development:
+    if: github.ref == 'refs/heads/dev/wordclock-ui-hardware'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install platformio
+      - run: tools/development/test_hardware.sh
+      - run: pio run -e ESP8266 -e ESP32 -e ESP32C3
+      - run: python tools/development/package.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wordclock-development
+          path: dist/development/
+          if-no-files-found: error
