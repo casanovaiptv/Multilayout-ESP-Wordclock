@@ -98,7 +98,7 @@ async function loadBoard() {
         const [build, manifest] = await Promise.all([metadata("./build.json"), metadata(directory + "manifest.json")]);
         const partList = manifest.builds?.[0]?.parts;
         if (!/^\d+\.\d+\.\d+-dev\.\d+$/.test(build.version) || !/^[a-f0-9]{12}$/.test(build.commit) ||
-            manifest.version !== build.version || manifest.new_install_prompt_erase !== false ||
+            manifest.version !== build.version || manifest.new_install_prompt_erase !== true ||
             manifest.builds.length !== 1 || manifest.builds[0].chipFamily !== family ||
             !Array.isArray(partList) || partList.length !== Object.keys(offsets).length ||
             new Set(partList.map(part => part.path)).size !== partList.length ||

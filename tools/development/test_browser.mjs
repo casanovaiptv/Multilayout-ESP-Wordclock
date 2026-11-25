@@ -124,17 +124,6 @@ try {
         await page.locator("#hardware-apply").waitFor({ state: "visible" });
     }
 
-    try {
-        await stat(resolve(directory, "build.json"));
-    } catch (error) {
-        if (error.code !== "ENOENT") throw error;
-        assert.deepEqual(errors, []);
-        console.log("Browser demo passed at 390, 768 and 1366 px.");
-        process.exitCode = 0;
-        await browser.close();
-        process.exit();
-    }
-
     await page.goto(origin + "/");
     for (const [board, name, parts] of [["esp8266", "ESP8266", 2], ["esp32", "ESP32", 5], ["esp32c3", "ESP32-C3", 5]]) {
         await page.locator("#board").selectOption(board);
@@ -147,6 +136,14 @@ try {
     await page.route(origin + "/firmware/esp32/firmware.bin", route => route.fulfill({ status: 404 }));
     await page.locator("#board").selectOption("esp32");
     await page.waitForFunction(() => document.querySelector("#status").textContent.includes("Firmware-Datei fehlt"));
+    assert.equal(await page.locator("#installer").isVisible(), false);
+    await page.route(origin + "/firmware/esp32c3/manifest.json", async route => {
+        const manifest = JSON.parse(await readFile(resolve(directory, "firmware/esp32c3/manifest.json"), "utf-8"));
+        manifest.new_install_prompt_erase = false;
+        await route.fulfill({ json: manifest });
+    });
+    await page.locator("#board").selectOption("esp32c3");
+    await page.waitForFunction(() => document.querySelector("#status").textContent.includes("passen nicht"));
     assert.equal(await page.locator("#installer").isVisible(), false);
     assert.deepEqual(errors, []);
     console.log("Demo, responsive layouts, persistence, calibration, limit, WPS and installer error handling passed.");

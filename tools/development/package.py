@@ -83,7 +83,7 @@ def package_board(board, output, build, core, version):
     manifest = {
         "name": "Wordclock Development",
         "version": version,
-        "new_install_prompt_erase": False,
+        "new_install_prompt_erase": True,
         "builds": [{
             "chipFamily": family,
             "parts": [{"path": name, "offset": offset} for offset, name, _ in images],
