@@ -115,7 +115,12 @@ try {
         await page.setViewportSize({ width, height: 900 });
         await open("hardware");
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-        assert.equal(overflow, 0, `page overflows at ${width}px`);
+        if (overflow > 0) {
+            const overflowing = await page.evaluate(() => [...document.querySelectorAll("*")]
+                .filter(element => element.getBoundingClientRect().right > innerWidth + 1)
+                .map(element => `${element.tagName}.${element.className}#${element.id}`).slice(0, 12));
+            assert.fail(`page overflows by ${overflow}px at ${width}px: ${overflowing.join(", ")}`);
+        }
         await page.locator("#hardware-apply").waitFor({ state: "visible" });
     }
 

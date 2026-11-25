@@ -54,6 +54,8 @@ def package_board(board, output, build, core, version):
     source = build / board
     firmware = (source / "firmware.bin").read_bytes()
     validate_image(firmware, chip_id, f"{board}/firmware.bin")
+    if version.encode("ascii") + b"\0" not in firmware:
+        raise ValueError(f"{board} was not built with version {version}")
     if chip_id is None:
         if len(firmware) > 0x100000:
             raise ValueError(f"{board} image exceeds one MiB")

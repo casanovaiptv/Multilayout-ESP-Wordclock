@@ -748,7 +748,7 @@
                 <header class="header"><h1 data-i18next="hardware.title"></h1></header>
                 <form id="hardware-form" class="pure-form">
                     <div class="hardware-grid">
-                        <fieldset class="box">
+                        <section class="box">
                             <h2 data-i18next="hardware.ring"></h2>
                             <label class="hardware-toggle"><input id="ring-enabled" type="checkbox"> <span data-i18next="hardware.ring-enable"></span></label>
                             <div class="hardware-fields">
@@ -775,9 +775,9 @@
                                     <button type="button" class="pure-button" data-hardware-action="cancel" data-i18next="hardware.cancel"></button>
                                 </div>
                             </div>
-                        </fieldset>
+                        </section>
                         <div class="hardware-side">
-                            <fieldset class="box">
+                            <section class="box">
                                 <h2 data-i18next="hardware.power"></h2>
                                 <label class="hardware-toggle"><input id="power-limit" type="checkbox"> <span data-i18next="hardware.power-enable"></span></label>
                                 <div class="hardware-fields">
@@ -786,13 +786,13 @@
                                 </div>
                                 <p class="hardware-note" data-i18next="hardware.power-note"></p>
                                 <output id="power-estimate"></output>
-                            </fieldset>
-                            <fieldset class="box">
+                            </section>
+                            <section class="box">
                                 <h2 data-i18next="hardware.wps"></h2>
                                 <label class="hardware-toggle"><input id="wps-enabled" type="checkbox"> <span data-i18next="hardware.wps-enable"></span></label>
                                 <label class="hardware-select"><span data-i18next="hardware.pin"></span><input id="wps-pin" type="number" min="0" max="255" step="1" value="255" required></label>
                                 <p class="hardware-note" data-i18next="hardware.wps-note"></p>
-                            </fieldset>
+                            </section>
                         </div>
                     </div>
                     <div class="box hardware-actions">
