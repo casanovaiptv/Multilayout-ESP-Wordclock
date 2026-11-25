@@ -325,9 +325,10 @@ public:
     };
 
     virtual const void getMinuteArray(uint16_t *returnArr, uint8_t col) {
-        const uint8_t physicalColumns = G.buildTypeDef == BuildTypeDef::DoubleResM1
-                                            ? colsWordMatrix() * 2 - 1
-                                            : colsWordMatrix();
+        const uint8_t physicalColumns =
+            G.buildTypeDef == BuildTypeDef::DoubleResM1
+                ? colsWordMatrix() * 2 - 1
+                : colsWordMatrix();
         uint16_t numPixelsWordMatrix = rowsWordMatrix() * physicalColumns;
         if (G.layoutVariant[ExtraLedPerRow]) {
             if (G.layoutVariant[FlipHorzVert] == false) {

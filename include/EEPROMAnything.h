@@ -142,7 +142,8 @@ bool write() {
 // Migrate without interpreting or rewriting any other legacy setting.
 bool migrateHardware() {
     const uint8_t canonical = hardwareSettings::canonicalLayout(G.clockTypeDef);
-    if (hardware.storedValid() && canonical == G.clockTypeDef) return false;
+    if (hardware.storedValid() && canonical == G.clockTypeDef)
+        return false;
     hardware = hardwareSettings::migrate(G.clockTypeDef).sealed();
     G.clockTypeDef = canonical;
     return true;

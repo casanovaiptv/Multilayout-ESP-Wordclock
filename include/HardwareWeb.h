@@ -11,7 +11,8 @@ bool calibrating() { return calibrationOwner != NoClient; }
 void restoreDisplay() {
     activeLedStrip->clearAll();
     G.progInit = true;
-    if (G.prog == COMMAND_IDLE) G.prog = COMMAND_MODE_WORD_CLOCK;
+    if (G.prog == COMMAND_IDLE)
+        G.prog = COMMAND_MODE_WORD_CLOCK;
     parametersChanged = true;
     secondsFrame.reset();
 }
@@ -32,7 +33,8 @@ void preview() {
 bool persist(const hardwareSettings::Settings &settings) {
     const auto previous = hardware;
     hardware = settings;
-    if (eeprom::write()) return true;
+    if (eeprom::write())
+        return true;
     hardware = previous;
     eeprom::writeAnything(hardwareSettings::StorageAddress, previous.sealed());
     return false;
@@ -89,9 +91,11 @@ void handle(uint8_t client, const uint8_t *payload, size_t length) {
             reply(client, "busy");
             return;
         }
-        if (!command["enabled"].is<bool>() || !command["count"].is<uint16_t>() ||
-            !command["offset"].is<uint16_t>() || !command["reverse"].is<bool>() ||
-            !command["limit"].is<bool>() || !command["supply"].is<uint16_t>() ||
+        if (!command["enabled"].is<bool>() ||
+            !command["count"].is<uint16_t>() ||
+            !command["offset"].is<uint16_t>() ||
+            !command["reverse"].is<bool>() || !command["limit"].is<bool>() ||
+            !command["supply"].is<uint16_t>() ||
             !command["reserve"].is<uint16_t>() || !command["wps"].is<bool>() ||
             !command["pin"].is<uint8_t>()) {
             reply(client, "invalid");
@@ -99,10 +103,14 @@ void handle(uint8_t client, const uint8_t *payload, size_t length) {
         }
 
         settings.flags &= LegacyWiring;
-        if (command["enabled"].as<bool>()) settings.flags |= RingEnabled;
-        if (command["reverse"].as<bool>()) settings.flags |= RingReverse;
-        if (command["limit"].as<bool>()) settings.flags |= PowerEnabled;
-        if (command["wps"].as<bool>()) settings.flags |= WpsEnabled;
+        if (command["enabled"].as<bool>())
+            settings.flags |= RingEnabled;
+        if (command["reverse"].as<bool>())
+            settings.flags |= RingReverse;
+        if (command["limit"].as<bool>())
+            settings.flags |= PowerEnabled;
+        if (command["wps"].as<bool>())
+            settings.flags |= WpsEnabled;
         settings.ringCount = command["count"];
         settings.ringOffset = command["offset"];
         settings.supplyMa = command["supply"];
@@ -110,7 +118,8 @@ void handle(uint8_t client, const uint8_t *payload, size_t length) {
         settings.wpsPin = command["pin"];
         if (!settings.valid()) {
             error = "invalid";
-        } else if (settings.has(WpsEnabled) && !wpsPinAllowed(settings.wpsPin)) {
+        } else if (settings.has(WpsEnabled) &&
+                   !wpsPinAllowed(settings.wpsPin)) {
             error = "gpio";
         } else {
             const auto previousMode = G.secondVariant;
@@ -152,4 +161,4 @@ void handle(uint8_t client, const uint8_t *payload, size_t length) {
     }
     reply(client, error);
 }
-}
+} // namespace hardwareWeb

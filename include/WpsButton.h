@@ -17,7 +17,8 @@ inline bool wpsPinAllowed(uint8_t pin) {
 #if defined(ESP8266)
     const bool usable = pin == 4 || pin == 5 || (pin >= 12 && pin <= 14);
 #elif defined(CONFIG_IDF_TARGET_ESP32C3)
-    const bool usable = pin == 1 || pin == 3 || (pin >= 4 && pin <= 7) || pin == 10;
+    const bool usable =
+        pin == 1 || pin == 3 || (pin >= 4 && pin <= 7) || pin == 10;
 #else
     const bool usable = pin == 4 || pin == 13 || pin == 14 ||
                         (pin >= 16 && pin <= 19) || pin == 21 || pin == 22 ||
@@ -25,7 +26,8 @@ inline bool wpsPinAllowed(uint8_t pin) {
                         pin == 32 || pin == 33;
 #endif
     return usable && pin != G.hardwarePins.led &&
-           pin != G.hardwarePins.powerButton && pin != G.hardwarePins.modeButton &&
+           pin != G.hardwarePins.powerButton &&
+           pin != G.hardwarePins.modeButton &&
            pin != G.hardwarePins.speedButton && pin != G.i2cSdaPin &&
            pin != G.i2cSclPin;
 }
@@ -46,7 +48,8 @@ public:
     State update() {
         const uint32_t now = millis();
         if (state == State::Success || state == State::Failed) {
-            if (now - since >= 2000) state = State::Idle;
+            if (now - since >= 2000)
+                state = State::Idle;
             return state;
         }
         if (state == State::Pairing) {
@@ -55,7 +58,8 @@ public:
                 stopPairing();
                 state = State::Connecting;
                 since = now;
-                if (!connectProfile()) fail(now);
+                if (!connectProfile())
+                    fail(now);
             } else if (event == Event::Error || now - since >= 120000) {
                 stopPairing();
                 fail(now);
@@ -79,12 +83,14 @@ public:
 
         const uint8_t pin = hardware.has(hardwareSettings::WpsEnabled) &&
                                     wpsPinAllowed(hardware.wpsPin)
-                                ? hardware.wpsPin : HARDWARE_PIN_DISABLED;
+                                ? hardware.wpsPin
+                                : HARDWARE_PIN_DISABLED;
         if (pin != activePin) {
             activePin = pin;
             pressed = false;
             consumed = false;
-            if (pin != HARDWARE_PIN_DISABLED) pinMode(pin, INPUT_PULLUP);
+            if (pin != HARDWARE_PIN_DISABLED)
+                pinMode(pin, INPUT_PULLUP);
         }
         if (pin == HARDWARE_PIN_DISABLED || digitalRead(pin) != LOW) {
             pressed = false;
@@ -95,7 +101,8 @@ public:
         } else if (!consumed && now - pressedAt >= 3000) {
             consumed = true;
             // Stop the portal before touching the station mode or credentials.
-            if (wifiManager.getConfigPortalActive()) wifiManager.stopConfigPortal();
+            if (wifiManager.getConfigPortalActive())
+                wifiManager.stopConfigPortal();
             start(now);
         }
         return state;
@@ -164,11 +171,13 @@ private:
     bool connectProfile() { return wifi_station_connect(); }
     bool saveProfile() {
         station_config current{};
-        return wifi_station_get_config(&current) && wifi_station_set_config(&current);
+        return wifi_station_get_config(&current) &&
+               wifi_station_set_config(&current);
     }
     void restoreProfile() {
         wifi_station_disconnect();
-        if (haveStored) wifi_station_set_config(&previousStored);
+        if (haveStored)
+            wifi_station_set_config(&previousStored);
         if (havePrevious) {
             wifi_station_set_config_current(&previous);
             wifi_station_connect();
@@ -206,7 +215,8 @@ private:
     bool saveProfile() {
         wifi_config_t current{};
         if (esp_wifi_get_config(WIFI_IF_STA, &current) != ESP_OK ||
-            esp_wifi_set_storage(WIFI_STORAGE_FLASH) != ESP_OK) return false;
+            esp_wifi_set_storage(WIFI_STORAGE_FLASH) != ESP_OK)
+            return false;
         const bool saved = esp_wifi_set_config(WIFI_IF_STA, &current) == ESP_OK;
         esp_wifi_set_storage(WIFI_STORAGE_RAM);
         return saved;

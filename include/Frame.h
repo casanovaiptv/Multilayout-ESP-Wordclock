@@ -17,8 +17,10 @@ public:
             return;
         }
 
-        const uint16_t sector = SecondsRingMapping::sectorAt(elapsed, ringCount());
-        if (sector == lastSector && lastMinute == _minute && !parametersChanged) {
+        const uint16_t sector =
+            SecondsRingMapping::sectorAt(elapsed, ringCount());
+        if (sector == lastSector && lastMinute == _minute &&
+            !parametersChanged) {
             return;
         }
         lastSector = sector;

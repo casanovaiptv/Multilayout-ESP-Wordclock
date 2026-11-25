@@ -91,6 +91,7 @@ void deleteActiveLedStrip() {
 #include "TransitionTypes/Transition.hpp"
 #include "WiFi.hpp"
 #include "WpsButton.h"
+
 #include "HardwareWeb.h"
 
 namespace {
@@ -330,10 +331,13 @@ bool updateWpsDisplay() {
         } else {
             hardwareWeb::disconnected(hardwareWeb::calibrationOwner);
             activeLedStrip->clearAll();
-            const float hue = state == WpsButton::State::Success ? 0.33f :
-                              state == WpsButton::State::Failed ? 0.f : 0.66f;
-            for (uint8_t row = 0; row < usedClockType->rowsWordMatrix(); ++row) {
-                for (uint8_t col = 0; col < usedClockType->colsWordMatrix(); ++col) {
+            const float hue = state == WpsButton::State::Success  ? 0.33f
+                              : state == WpsButton::State::Failed ? 0.f
+                                                                  : 0.66f;
+            for (uint8_t row = 0; row < usedClockType->rowsWordMatrix();
+                 ++row) {
+                for (uint8_t col = 0; col < usedClockType->colsWordMatrix();
+                     ++col) {
                     led.setPixel(row, col, HsbColor(hue, 1.f, 0.2f));
                 }
             }
@@ -556,7 +560,8 @@ void setup() {
         eeprom::write();
     }
 
-    if (eeprom::migrateHardware()) eeprom::write();
+    if (eeprom::migrateHardware())
+        eeprom::write();
 
     usedClockType = clockWork.getPointer(G.clockTypeDef);
 
@@ -670,7 +675,8 @@ void setup() {
     webSocket.setAuthorization(WEB_USER, WEB_PASSWORD);
 #endif
     webSocket.onEvent(webSocketEvent);
-    if (!wifiManager.getConfigPortalActive()) startWebServer();
+    if (!wifiManager.getConfigPortalActive())
+        startWebServer();
 
     Serial.println("Websocket started");
 
@@ -788,8 +794,10 @@ void loop() {
     //------------------------------------------------
     // Websocket
     //------------------------------------------------
-    if (!wifiManager.getConfigPortalActive()) startWebServer();
-    if (webServerStarted) webSocket.loop();
+    if (!wifiManager.getConfigPortalActive())
+        startWebServer();
+    if (webServerStarted)
+        webSocket.loop();
 
     if (hardwareWeb::calibrating() &&
         millis() - hardwareWeb::calibrationTouched >= 120000) {
@@ -802,7 +810,8 @@ void loop() {
         recoveryTick = millis();
         led.show();
     }
-    if (wpsDisplay || hardwareWeb::calibrating()) return;
+    if (wpsDisplay || hardwareWeb::calibrating())
+        return;
 
     //------------------------------------------------
     // MQTT
@@ -814,9 +823,9 @@ void loop() {
     //------------------------------------------------
     // Frame
     //------------------------------------------------
-    const uint32_t elapsed = utc > 100000000
-                                 ? uint32_t(tm.tm_sec) * 1000 + now.tv_usec / 1000
-                                 : millis() % 60000;
+    const uint32_t elapsed =
+        utc > 100000000 ? uint32_t(tm.tm_sec) * 1000 + now.tv_usec / 1000
+                        : millis() % 60000;
     secondsFrame.loop(elapsed);
 
     //------------------------------------------------

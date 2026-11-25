@@ -317,16 +317,16 @@ void Led::setbySecondArray(ColorPosition colorPosition) {
         getColorbyPositionWithAppliedBrightness(colorPosition);
 
     for (uint16_t i = 0; i < ringCount(); ++i) {
-        const uint16_t index = ringStart + SecondsRingMapping::physicalIndex(
-            i, ringCount(), hardware.ringOffset,
-            hardware.has(hardwareSettings::RingReverse));
+        const uint16_t index =
+            ringStart + SecondsRingMapping::physicalIndex(
+                            i, ringCount(), hardware.ringOffset,
+                            hardware.has(hardwareSettings::RingReverse));
         if (frameArray[i]) {
             setPixel(index, displayedColor);
         } else {
             clearPixel(index);
         }
     }
-
 }
 
 //------------------------------------------------------------------------------

@@ -12,11 +12,12 @@ struct HsbColor {
 #define DEFAULT_BRIGHTNESS 0.5f
 #define ESP8266
 #include "WordClockState.h"
+
 #include "ClockTypeForTests.h"
 #include "EEPROMAnything.h"
+#include "Frame.h"
 #include "LedGeometry.h"
 #include "LedPower.h"
-#include "Frame.h"
 
 uint32_t clockMs = 0;
 bool pressed = false;
@@ -51,20 +52,39 @@ wps_st_cb_t wpsCallback = nullptr;
 station_config station{{'o', 'l', 'd'}};
 station_config stored = station;
 void disable_extra4k_at_link_time() {}
-bool wifi_station_get_config(station_config *value) { *value = station; return true; }
-bool wifi_station_get_config_default(station_config *value) { *value = stored; return true; }
-bool wifi_station_set_config_current(station_config *value) { station = *value; return true; }
+bool wifi_station_get_config(station_config *value) {
+    *value = station;
+    return true;
+}
+bool wifi_station_get_config_default(station_config *value) {
+    *value = stored;
+    return true;
+}
+bool wifi_station_set_config_current(station_config *value) {
+    station = *value;
+    return true;
+}
 bool wifi_station_set_config(station_config *value) {
     stored = *value;
     saved = true;
     return true;
 }
-bool wifi_station_disconnect() { wifiStatus = 0; connecting = false; return true; }
-bool wifi_station_connect() { connecting = true; return true; }
+bool wifi_station_disconnect() {
+    wifiStatus = 0;
+    connecting = false;
+    return true;
+}
+bool wifi_station_connect() {
+    connecting = true;
+    return true;
+}
 bool wifi_wps_enable(WPS_TYPE_t) { return wpsAvailable; }
 bool wifi_wps_disable() { return true; }
 bool wifi_wps_start() { return true; }
-bool wifi_set_wps_cb(wps_st_cb_t cb) { wpsCallback = cb; return true; }
+bool wifi_set_wps_cb(wps_st_cb_t cb) {
+    wpsCallback = cb;
+    return true;
+}
 
 void testMigration() {
     for (uint8_t layout : {13, 18, 11}) {
@@ -80,7 +100,9 @@ void testMigration() {
         strcpy(G.timezone, "CET-1CEST,M3.5.0,M10.5.0/3");
         eeprom::writeAnything(0, G);
         EEPROM.bytes[511] = 2;
-        const uint8_t expectedLayout = layout == 13 ? 12 : layout == 18 ? 17 : 11;
+        const uint8_t expectedLayout = layout == 13   ? 12
+                                       : layout == 18 ? 17
+                                                      : 11;
         GLOBAL expected = G;
         expected.clockTypeDef = expectedLayout;
         eeprom::read();
@@ -129,18 +151,23 @@ void testLayouts() {
                 assert(enabled.transmitted == enabled.installed);
                 std::vector<bool> matrix(enabled.ringStart);
                 for (uint8_t row = 0; row < layout->rowsWordMatrix(); ++row) {
-                    for (uint8_t col = 0; col < layout->colsWordMatrix(); ++col) {
-                        const uint16_t index = layout->getFrontMatrixIndex(row, col);
+                    for (uint8_t col = 0; col < layout->colsWordMatrix();
+                         ++col) {
+                        const uint16_t index =
+                            layout->getFrontMatrixIndex(row, col);
                         assert((index + 1) * scale <= enabled.ringStart);
                         assert(!matrix[index]);
                         matrix[index] = true;
                     }
                 }
                 for (uint8_t slot = 0; slot < 3; ++slot) {
-                    if (!layout->supportsMinuteVariant(static_cast<MinuteVariant>(slot + 1))) continue;
+                    if (!layout->supportsMinuteVariant(
+                            static_cast<MinuteVariant>(slot + 1)))
+                        continue;
                     uint16_t indices[4]{};
                     layout->getMinuteArray(indices, slot);
-                    for (uint16_t index : indices) assert(index < enabled.ringStart);
+                    for (uint16_t index : indices)
+                        assert(index < enabled.ringStart);
                 }
             }
         }
@@ -169,8 +196,10 @@ void testRingAndPower() {
         for (bool reverse : {false, true}) {
             std::vector<bool> hit(count);
             for (uint16_t sector = 0; sector < count; ++sector) {
-                const uint16_t index = physicalIndex(sector, count, offset, reverse);
-                const uint16_t expected = (offset + count + (reverse ? -sector : sector)) % count;
+                const uint16_t index =
+                    physicalIndex(sector, count, offset, reverse);
+                const uint16_t expected =
+                    (offset + count + (reverse ? -sector : sector)) % count;
                 assert(index == expected && !hit[index]);
                 hit[index] = true;
             }
@@ -182,12 +211,17 @@ void testRingAndPower() {
     for (uint16_t pixels : {48, 60, 110, 1400}) {
         for (uint16_t budget : {0, 150, 300, 3000, 60000}) {
             for (uint16_t frame = 0; frame < 256; ++frame) {
-                const uint8_t colors[] = {uint8_t(frame), uint8_t(frame / 3), uint8_t(255 - frame), uint8_t(frame / 2)};
-                const uint32_t sum = uint32_t(pixels) * (colors[0] + colors[1] + colors[2] + colors[3]);
+                const uint8_t colors[] = {uint8_t(frame), uint8_t(frame / 3),
+                                          uint8_t(255 - frame),
+                                          uint8_t(frame / 2)};
+                const uint32_t sum = uint32_t(pixels) * (colors[0] + colors[1] +
+                                                         colors[2] + colors[3]);
                 const uint8_t gain = ledPower::target(pixels, sum, budget);
                 uint32_t scaled = 0;
-                for (uint8_t value : colors) scaled += ledPower::scale(value, gain);
-                assert(ledPower::estimate(pixels, scaled * pixels) <= std::max(pixels, budget));
+                for (uint8_t value : colors)
+                    scaled += ledPower::scale(value, gain);
+                assert(ledPower::estimate(pixels, scaled * pixels) <=
+                       std::max(pixels, budget));
             }
         }
     }
@@ -198,8 +232,9 @@ void testAnimations() {
     hardware.flags = hardwareSettings::RingEnabled;
     for (uint16_t count : {1, 48, 60, 120, 200}) {
         hardware.ringCount = count;
-        for (SecondVariant animation : {SecondVariant::FrameDot, SecondVariant::FrameSector,
-                                        SecondVariant::FrameSectorToggle}) {
+        for (SecondVariant animation :
+             {SecondVariant::FrameDot, SecondVariant::FrameSector,
+              SecondVariant::FrameSectorToggle}) {
             G.secondVariant = animation;
             for (uint8_t minute : {0, 1}) {
                 _minute = minute;
@@ -208,12 +243,18 @@ void testAnimations() {
                     parametersChanged = false;
                     frame.reset();
                     frame.loop(time);
-                    assert(G.prog == COMMAND_MODE_WORD_CLOCK && parametersChanged);
-                    const uint16_t sector = SecondsRingMapping::sectorAt(time, count);
+                    assert(G.prog == COMMAND_MODE_WORD_CLOCK &&
+                           parametersChanged);
+                    const uint16_t sector =
+                        SecondsRingMapping::sectorAt(time, count);
                     for (uint16_t i = 0; i < count; ++i) {
-                        const bool expected = animation == SecondVariant::FrameDot
-                            ? i == sector
-                            : (i <= sector) != (animation == SecondVariant::FrameSectorToggle && minute);
+                        const bool expected =
+                            animation == SecondVariant::FrameDot
+                                ? i == sector
+                                : (i <= sector) !=
+                                      (animation ==
+                                           SecondVariant::FrameSectorToggle &&
+                                       minute);
                         assert(frameArray[i] == expected);
                     }
                 }
@@ -248,7 +289,8 @@ void testWps() {
         clockMs += 2999;
         assert(button.update() == State::Idle);
         ++clockMs;
-        assert(button.update() == (scenario == 4 ? State::Failed : State::Pairing));
+        assert(button.update() ==
+               (scenario == 4 ? State::Failed : State::Pairing));
         assert(!wifiManager.active);
         if (scenario == 0 || scenario == 3) {
             station = {{'n', 'e', 'w'}};
@@ -265,15 +307,18 @@ void testWps() {
                 assert(button.needsPortal() && !button.needsPortal());
             }
         } else if (scenario < 4) {
-            if (scenario == 1) wpsCallback(WPS_CB_ST_FAILED);
-            else clockMs += 120000;
+            if (scenario == 1)
+                wpsCallback(WPS_CB_ST_FAILED);
+            else
+                clockMs += 120000;
             assert(button.update() == State::Failed);
             assert(button.needsPortal() && !button.needsPortal());
         }
         assert(reconnect);
         clockMs += 2000;
         assert(button.update() == State::Idle);
-        assert(button.update() == State::Idle); // Holding cannot start a second attempt.
+        assert(button.update() ==
+               State::Idle); // Holding cannot start a second attempt.
         pressed = false;
         button.update();
     }
@@ -285,5 +330,6 @@ int main() {
     testRingAndPower();
     testAnimations();
     testWps();
-    puts("Legacy EEPROM, 35 layouts, ring bounds/directions, power frames and mock WPS passed.");
+    puts("Legacy EEPROM, 35 layouts, ring bounds/directions, power frames and "
+         "mock WPS passed.");
 }

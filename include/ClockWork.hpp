@@ -1,8 +1,8 @@
 #include "ClockWork.h"
 #include "HardwareButtonController.hpp"
 #include "I2CBus.h"
-#include "NeoMultiFeature.hpp"
 #include "LedGeometry.h"
+#include "NeoMultiFeature.hpp"
 #include "OpenWeatherMap.h"
 #include "SensitiveData.h"
 #include "TransitionTypes/Transition.h"
@@ -286,8 +286,9 @@ ClockType *ClockWork::getPointer(uint8_t type) {
 //------------------------------------------------------------------------------
 
 void ClockWork::initLedStrip(uint8_t num) {
-    const auto geometry = ledGeometry(
-        *usedClockType, ringCount(), hardware.has(hardwareSettings::LegacyWiring));
+    const auto geometry =
+        ledGeometry(*usedClockType, ringCount(),
+                    hardware.has(hardwareSettings::LegacyWiring));
     const uint16_t ledCount = geometry.transmitted;
 
     if (activeLedPin != G.hardwarePins.led || activeLedColorType != num ||
@@ -1865,28 +1866,32 @@ void ClockWork::loop(struct tm &tm) {
 
         led.clear();
         led.show();
-        const uint8_t canonical = hardwareSettings::canonicalLayout(G.clockTypeDef);
+        const uint8_t canonical =
+            hardwareSettings::canonicalLayout(G.clockTypeDef);
         ClockType *next = getPointer(canonical);
         if (canonical != G.clockTypeDef) {
-            hardware.flags |= hardwareSettings::RingEnabled |
-                              hardwareSettings::LegacyWiring;
+            hardware.flags |=
+                hardwareSettings::RingEnabled | hardwareSettings::LegacyWiring;
             hardware.ringCount = SecondsRingMapping::DefaultCount;
             hardware.ringOffset = SecondsRingMapping::DefaultOffset;
         } else if (next != usedClockType) {
             hardware.flags &= ~hardwareSettings::LegacyWiring;
         }
         G.clockTypeDef = canonical;
-        const bool dimensionsChanged = next->rowsWordMatrix() != usedClockType->rowsWordMatrix() ||
-                                       next->colsWordMatrix() != usedClockType->colsWordMatrix();
+        const bool dimensionsChanged =
+            next->rowsWordMatrix() != usedClockType->rowsWordMatrix() ||
+            next->colsWordMatrix() != usedClockType->colsWordMatrix();
         usedClockType = next;
         if (dimensionsChanged) {
             delete transition;
-            transition = new Transition(next->rowsWordMatrix(), next->colsWordMatrix());
+            transition =
+                new Transition(next->rowsWordMatrix(), next->colsWordMatrix());
         }
         resetMinVariantIfNotAvailable();
         checkForValidLanguageVariant();
         initLedStrip(G.Colortype);
-        if (dimensionsChanged) transition->init();
+        if (dimensionsChanged)
+            transition->init();
         secondsFrame.reset();
         G.progInit = true;
         eeprom::write();

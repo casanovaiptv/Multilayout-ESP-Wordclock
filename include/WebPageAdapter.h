@@ -172,7 +172,7 @@ bool parseColor(uint8_t *payload, size_t length) {
 namespace hardwareWeb {
 void disconnected(uint8_t client);
 void handle(uint8_t client, const uint8_t *payload, size_t length);
-}
+} // namespace hardwareWeb
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
                     size_t length) {

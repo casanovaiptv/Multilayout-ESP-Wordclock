@@ -36,10 +36,13 @@ struct Settings {
     Settings sealed() const {
         Settings record = *this;
         uint16_t crc = 0xFFFF;
-        const uint16_t values[] = {
-            uint16_t(signature >> 16), uint16_t(signature), ringCount,
-            ringOffset, supplyMa, reserveMa, uint16_t((flags << 8) | wpsPin)
-        };
+        const uint16_t values[] = {uint16_t(signature >> 16),
+                                   uint16_t(signature),
+                                   ringCount,
+                                   ringOffset,
+                                   supplyMa,
+                                   reserveMa,
+                                   uint16_t((flags << 8) | wpsPin)};
         for (uint16_t value : values) {
             crc ^= value;
             for (uint8_t bit = 0; bit < 16; ++bit) {
@@ -66,8 +69,10 @@ inline Settings migrate(uint8_t layout) {
 }
 
 inline uint8_t canonicalLayout(uint8_t layout) {
-    if (layout == 13) return 12;
-    if (layout == 18) return 17;
+    if (layout == 13)
+        return 12;
+    if (layout == 18)
+        return 17;
     return layout;
 }
-}
+} // namespace hardwareSettings
