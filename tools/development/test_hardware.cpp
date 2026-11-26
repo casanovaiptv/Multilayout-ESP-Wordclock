@@ -87,6 +87,12 @@ bool wifi_set_wps_cb(wps_st_cb_t cb) {
 }
 
 void testMigration() {
+    const auto factory = hardwareSettings::factoryDefaults();
+    assert(factory.storedValid());
+    assert(factory.has(hardwareSettings::RingEnabled));
+    assert(factory.has(hardwareSettings::PowerEnabled));
+    assert(!factory.has(hardwareSettings::WpsEnabled));
+    assert(factory.supplyMa == 2000 && factory.reserveMa == 300);
     for (uint8_t layout : {13, 18, 11}) {
         memset(EEPROM.bytes, 0xFF, sizeof(EEPROM.bytes));
         G = {};

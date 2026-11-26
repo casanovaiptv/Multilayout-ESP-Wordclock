@@ -86,39 +86,50 @@ void handle(uint8_t client, const uint8_t *payload, size_t length) {
         return;
     }
 
-    if (!strcmp(action, "apply")) {
+    const bool applyAll = !strcmp(action, "apply");
+    const bool applyRing = applyAll || !strcmp(action, "apply-ring");
+    const bool applyHardware = applyAll || !strcmp(action, "apply-hardware");
+    if (applyRing || applyHardware) {
         if (calibrating()) {
             reply(client, "busy");
             return;
         }
-        if (!command["enabled"].is<bool>() ||
-            !command["count"].is<uint16_t>() ||
-            !command["offset"].is<uint16_t>() ||
-            !command["reverse"].is<bool>() || !command["limit"].is<bool>() ||
-            !command["supply"].is<uint16_t>() ||
-            !command["reserve"].is<uint16_t>() || !command["wps"].is<bool>() ||
-            !command["pin"].is<uint8_t>()) {
-            reply(client, "invalid");
-            return;
+        if (applyRing) {
+            if (!command["enabled"].is<bool>() ||
+                !command["count"].is<uint16_t>() ||
+                !command["offset"].is<uint16_t>() ||
+                !command["reverse"].is<bool>()) {
+                reply(client, "invalid");
+                return;
+            }
+            settings.flags &= ~(RingEnabled | RingReverse);
+            if (command["enabled"].as<bool>())
+                settings.flags |= RingEnabled;
+            if (command["reverse"].as<bool>())
+                settings.flags |= RingReverse;
+            settings.ringCount = command["count"];
+            settings.ringOffset = command["offset"];
         }
-
-        settings.flags &= LegacyWiring;
-        if (command["enabled"].as<bool>())
-            settings.flags |= RingEnabled;
-        if (command["reverse"].as<bool>())
-            settings.flags |= RingReverse;
-        if (command["limit"].as<bool>())
-            settings.flags |= PowerEnabled;
-        if (command["wps"].as<bool>())
-            settings.flags |= WpsEnabled;
-        settings.ringCount = command["count"];
-        settings.ringOffset = command["offset"];
-        settings.supplyMa = command["supply"];
-        settings.reserveMa = command["reserve"];
-        settings.wpsPin = command["pin"];
+        if (applyHardware) {
+            if (!command["limit"].is<bool>() ||
+                !command["supply"].is<uint16_t>() ||
+                !command["reserve"].is<uint16_t>() ||
+                !command["wps"].is<bool>() || !command["pin"].is<uint8_t>()) {
+                reply(client, "invalid");
+                return;
+            }
+            settings.flags &= ~(PowerEnabled | WpsEnabled);
+            if (command["limit"].as<bool>())
+                settings.flags |= PowerEnabled;
+            if (command["wps"].as<bool>())
+                settings.flags |= WpsEnabled;
+            settings.supplyMa = command["supply"];
+            settings.reserveMa = command["reserve"];
+            settings.wpsPin = command["pin"];
+        }
         if (!settings.valid()) {
             error = "invalid";
-        } else if (settings.has(WpsEnabled) &&
+        } else if (applyHardware && settings.has(WpsEnabled) &&
                    !wpsPinAllowed(settings.wpsPin)) {
             error = "gpio";
         } else {

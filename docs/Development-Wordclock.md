@@ -1,24 +1,24 @@
-# Multilayout ESP Wordclock 4.4.0-dev.1
+# Multilayout ESP Wordclock 4.4.0-dev.2
 
 Diese Entwicklungsfirmware gehört zum Branch `dev/wordclock-ui-hardware`. Die ZIP-Datei enthält den Testinstaller, die Browser-Demo, die Flash-Dateien für alle drei Zielplattformen und die zugehörigen SHA-256-Prüfsummen.
 
 ## Firmware-Weboberfläche
 
-Öffne nach dem Start die IP-Adresse deiner Wortuhr im Browser. Die neue Oberfläche verwendet ein dunkles Design und dieselben Einstellungen wie zuvor. Unter **Hardware** findest du Sekundenring, Strombegrenzung und WPS. Das Captive Portal für die WLAN-Einrichtung und der OTA-Updater auf Port 81 bleiben verfügbar.
+Öffne nach dem Start die IP-Adresse deiner Wortuhr im Browser. Die neue Oberfläche verwendet ein dunkles Design und dieselben Einstellungen wie zuvor. Der Sekundenring steht unter **Anzeige** direkt unter **Minuten**. Unter **Hardware** findest du Strombegrenzung und WPS. Das Captive Portal für die WLAN-Einrichtung und der OTA-Updater auf Port 81 bleiben verfügbar.
 
 ### Sekundenring
 
-Der Sekundenring ist für jedes Frontlayout konfigurierbar. Die Anzahl reicht von 1 bis 200. Der Startwert beträgt 60 LEDs, der Start-Offset 8. Die Standardrichtung entspricht einer im Uhrzeigersinn angeschlossenen LED-Kette. Beim Einschalten eines zuvor ausgeschalteten Rings wird bei Bedarf die Punktanimation gewählt. Die Punkt-, Sektor- und wechselnde Sektoranimation sowie die separate Sekundenanzeige bleiben verfügbar.
+Der Sekundenring ist für jedes Frontlayout konfigurierbar. Die Anzahl reicht von 1 bis 200. Bei einer frischen Konfiguration ist der Ring mit 60 LEDs, Start-Offset 8 und der Animation **Umlaufender Sektor** eingeschaltet. Die Standardrichtung entspricht einer im Uhrzeigersinn angeschlossenen LED-Kette. Beim Einschalten eines zuvor ausgeschalteten Rings wird bei Bedarf die Punktanimation gewählt. Die Punkt-, Sektor- und wechselnde Sektoranimation sowie die separate Sekundenanzeige bleiben verfügbar.
 
 Schließe den Ring am Ende der LED-Kette an. Die Firmware bestimmt seinen Anfang aus den letzten verwendeten physischen LED-Indizes der Matrix und den für das Layout verfügbaren Minutenvarianten. Bei Fronten mit sieben Minuten-LED-Positionen werden diese auch bei Auswahl von vier Minuten-LEDs reserviert. Die Layout- und Auflösungseinstellungen bestimmen die Verkabelung der Matrix. Die Anzahl des Rings ist unabhängig davon.
 
 Die alten Rahmen-Layouts 13 und 18 werden zu den Frontlayouts 12 und 17 migriert. **Nach der aktualisierten Vorgabe werden beide alten Ringvarianten auf 60 LEDs und Offset 8 gesetzt.** Bei der originalen 10×11-Verdrahtung sitzen die Minuten-LEDs bei Indizes 110–113 und der Ring beginnt bei Index 114. Wenn die Matrix durch höhere Auflösung oder zusätzliche LEDs darüber hinausreicht, beginnt der Ring hinter der Matrix und den Minutenpositionen. Bei physisch weiterhin vorhandenen 48 oder 120 LEDs kannst du die passende Anzahl nach dem Update wieder einstellen. Überzählige LEDs eines früheren 120er-Rings erhalten Schwarz. Bestehende Fronten ohne Ring behalten ihren ausgeschalteten Ring. Andere EEPROM-Einstellungen und die WLAN-Zugangsdaten werden bei der Migration übernommen.
 
-Zum Kalibrieren die Ring-Einstellungen speichern und **Kalibrieren** wählen. Ausschließlich die aktuelle Nullposition leuchtet. Plus und Minus durchlaufen die physischen Ringpositionen mit Überlauf am Ende. **Offset speichern** übernimmt die Position dauerhaft und setzt den Anzeigemodus fort. **Abbrechen**, das Verlassen des Hardware-Menüs, eine unterbrochene Browser-Verbindung oder 120 Sekunden ohne Bedienung beenden die Vorschau ohne Übernahme.
+Zum Kalibrieren die Ring-Einstellungen speichern und **Kalibrieren** wählen. Ausschließlich die aktuelle Nullposition leuchtet. Plus und Minus durchlaufen die physischen Ringpositionen mit Überlauf am Ende. **Offset speichern** übernimmt die Position dauerhaft und setzt den Anzeigemodus fort. **Abbrechen**, das Verlassen des Anzeige-Menüs, eine unterbrochene Browser-Verbindung oder 120 Sekunden ohne Bedienung beenden die Vorschau ohne Übernahme.
 
 ### Strombegrenzung
 
-Aktiviere die Strombegrenzung und trage die maximale Stromstärke des Netzteils und die gewünschte Reserve für ESP und weitere Verbraucher in Ampere ein. Aus Netzteilstrom abzüglich Reserve ergibt sich das LED-Budget. Die Oberfläche zeigt den geschätzten LED-Strom der ausgegebenen Helligkeit und meldet einen aktiven Eingriff.
+Bei einer frischen Konfiguration ist die Strombegrenzung eingeschaltet. Voreingestellt sind 2,0 A Netzteilstrom und 0,3 A Reserve für ESP und weitere Verbraucher. Aus Netzteilstrom abzüglich Reserve ergibt sich das LED-Budget. Die Oberfläche zeigt den geschätzten LED-Strom der ausgegebenen Helligkeit und meldet einen aktiven Eingriff.
 
 Das Rechenmodell verwendet 1 mA Ruhestrom pro konfigurierter LED-Position sowie bis zu 20 mA pro RGB- bzw. RGBW-Kanal. Ein gemeinsamer Faktor skaliert die Kanalwerte unmittelbar vor der Ausgabe. Die Dimmung greift sofort ein, die Helligkeit steigt bei freiem Budget schrittweise wieder an. Die eingestellte Wunschhelligkeit bleibt gespeichert. Auch Animationen, Kalibrierung und WPS-Anzeige laufen über diese Ausgabe.
 

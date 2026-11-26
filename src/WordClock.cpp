@@ -403,7 +403,7 @@ void setup() {
     //-------------------------------------
 
     if (G.sernr != SERNR) {
-        hardware = hardwareSettings::Settings{}.sealed();
+        hardware = hardwareSettings::factoryDefaults();
         for (uint16_t i = 0; i < EEPROM_SIZE; i++) {
             EEPROM.write(i, i);
         }
@@ -421,7 +421,7 @@ void setup() {
         G.effectBri = 2;
         G.effectSpeed = 5;
         G.client_nr = 0;
-        G.secondVariant = SecondVariant::Off;
+        G.secondVariant = SecondVariant::FrameSectorToggle;
         G.bitmapSymbol = BitmapSymbol::HEART;
 // C++23 #elifdef doesn't work yet
 #ifdef MINUTE_Off

@@ -721,7 +721,13 @@ function sendHardware(action, values) {
 }
 
 function setHardwareStatus(status) {
-	document.getElementById("hardware-status").textContent = status ? i18next.t(`hardware.${status}`) : "";
+	const message = status ? i18next.t(`hardware.${status}`) : "";
+	if (!hardwareAction || hardwareAction === "apply-hardware") {
+		document.getElementById("hardware-status").textContent = message;
+	}
+	if (hardwareAction !== "apply-hardware") {
+		document.getElementById("ring-status").textContent = message;
+	}
 }
 
 function setCalibrationState(active, enabled) {
@@ -729,7 +735,8 @@ function setCalibrationState(active, enabled) {
 	document.getElementById("ring-calibration").hidden = !active;
 	document.getElementById("ring-calibrate").disabled = !enabled || active;
 	document.getElementById("hardware-apply").disabled = !hardwareLoaded || active;
-	document.querySelectorAll("#hardware-form input, #show-seconds").forEach(input => {
+	document.getElementById("ring-apply").disabled = !hardwareLoaded || active;
+	document.querySelectorAll("#hardware-form input, #ring-form input, #show-seconds").forEach(input => {
 		input.disabled = !hardwareLoaded || active;
 	});
 }
@@ -738,20 +745,22 @@ function receiveHardware(data) {
 	const element = id => document.getElementById(id);
 	const firstUpdate = !hardwareLoaded;
 	hardwareLoaded = true;
-	if (firstUpdate || (!data.telemetry && !data.error)) {
+	if (firstUpdate || (!data.telemetry && !data.error && hardwareAction !== "apply-hardware")) {
 		element("ring-enabled").checked = data.enabled;
 		element("ring-count").value = data.count;
 		element("ring-offset").value = data.offset;
 		element("ring-offset").max = data.count - 1;
 		element("ring-reverse").checked = data.reverse;
 		element("show-seconds").value = data.animation;
+	}
+	if (firstUpdate || (!data.telemetry && !data.error && hardwareAction === "apply-hardware")) {
 		element("power-limit").checked = data.limit;
 		element("power-supply").value = data.supply / 1000;
 		element("power-reserve").value = data.reserve / 1000;
 		element("wps-enabled").checked = data.wps;
 		element("wps-pin").value = data.pin;
-		enableSpecific("specific-layout-7", data.enabled);
 	}
+	enableSpecific("specific-layout-7", data.enabled);
 	setCalibrationState(data.calibrating, data.enabled);
 	element("ring-preview").textContent = `${i18next.t("hardware.offset")} ${data.preview}`;
 	const limiting = data.limiting ? ` · ${i18next.t("hardware.limiting")}` : "";
@@ -759,7 +768,7 @@ function receiveHardware(data) {
 	element("power-estimate").textContent = `${i18next.t("hardware.led-status")} ${amps} A${limiting}`;
 	element("power-estimate").classList.toggle("limiting", data.limiting);
 	if (!data.telemetry) {
-		setHardwareStatus(data.error || (["apply", "save"].includes(hardwareAction) ? "applied" : ""));
+		setHardwareStatus(data.error || (["apply-ring", "apply-hardware", "save"].includes(hardwareAction) ? "applied" : ""));
 		hardwareAction = "";
 	} else if (firstUpdate) {
 		setHardwareStatus("");
@@ -774,13 +783,18 @@ function initHardwareForm() {
 		offset.max = Math.max(0, count - 1);
 		if (offset.valueAsNumber >= count) offset.value = offset.valueAsNumber % count;
 	});
-	element("hardware-form").addEventListener("submit", event => {
+	element("ring-form").addEventListener("submit", event => {
 		event.preventDefault();
-		sendHardware("apply", {
+		sendHardware("apply-ring", {
 			enabled: element("ring-enabled").checked,
 			count: element("ring-count").valueAsNumber,
 			offset: element("ring-offset").valueAsNumber,
-			reverse: element("ring-reverse").checked,
+			reverse: element("ring-reverse").checked
+		});
+	});
+	element("hardware-form").addEventListener("submit", event => {
+		event.preventDefault();
+		sendHardware("apply-hardware", {
 			limit: element("power-limit").checked,
 			supply: Math.round(element("power-supply").valueAsNumber * 1000),
 			reserve: Math.round(element("power-reserve").valueAsNumber * 1000),
@@ -881,7 +895,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (hamburger.getAttribute("aria-expanded") === "true") hamburger.click();
 			if (navigation === "hardware" && websocket && websocket.readyState === WebSocket.OPEN) {
 				sendHardware("status");
-			} else if (calibrationActive) {
+			}
+			if (calibrationActive && navigation !== "frontoptions") {
 				sendHardware("cancel");
 			}
 

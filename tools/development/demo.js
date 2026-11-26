@@ -12,8 +12,8 @@
         ledPin: 3, powerButtonPin: 255, modeButtonPin: 255, speedButtonPin: 255,
         i2cSdaPin: 255, i2cSclPin: 255,
         colors: [[172, 65, 90], [215, 80, 0], [172, 70, 75]],
-        enabled: true, count: 60, offset: 8, reverse: false, animation: 1,
-        limit: false, supply: 2000, reserve: 300, wps: false, pin: 19
+        enabled: true, count: 60, offset: 8, reverse: false, animation: 3,
+        limit: true, supply: 2000, reserve: 300, wps: false, pin: 19
     };
     let state = structuredClone(defaults);
     try { Object.assign(state, JSON.parse(localStorage.getItem(key))); } catch { /* storage is optional */ }
@@ -124,8 +124,8 @@
     function hardware(socket, message) {
         const action = message.hardware;
         let error = null;
-        if (action === "apply") {
-            const { enabled, count, offset, reverse, limit, supply, reserve, wps: enableWps, pin } = message;
+        if (["apply", "apply-ring", "apply-hardware"].includes(action)) {
+            const { enabled, count, offset, reverse, limit, supply, reserve, wps: enableWps, pin } = Object.assign({}, state, message);
             if (!Number.isInteger(count) || count < 1 || count > 200 ||
                 !Number.isInteger(offset) || offset < 0 || offset >= count ||
                 !Number.isInteger(supply) || supply < 1 || supply > 60000 || reserve < 0 || reserve > supply) {
@@ -183,7 +183,7 @@
             const command = Number(raw.slice(0, 3));
             const values = (raw.slice(3).match(/.{3}/g) || []).map(Number);
             if (command === 200) {
-                this.reply("config", Object.assign({}, state, { hasSecondsFrame: state.enabled, hasTwenty: true, supportedMinuteVariants: 15 }));
+                this.reply("config", Object.assign({}, state, { hasSecondsFrame: state.enabled, secondVariant: state.animation, hasTwenty: true, supportedMinuteVariants: 15 }));
                 return;
             }
             if (command === 201) {

@@ -64,6 +64,12 @@ struct Settings {
 
 static_assert(sizeof(Settings) == 16, "EEPROM extension size changed");
 
+inline Settings factoryDefaults() {
+    Settings result;
+    result.flags = RingEnabled | PowerEnabled;
+    return result.sealed();
+}
+
 inline Settings migrate(uint8_t layout) {
     Settings result;
     if (layout == 13 || layout == 18) {

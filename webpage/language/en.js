@@ -20,6 +20,7 @@ let TRANSLATION_EN_US = {
 		"wps-enable": "Enable WPS button",
 		"pin": "Button GPIO",
 		"wps-note": "Connect the button to ground. Hold for 3 seconds, then start WPS on the router.",
+		"apply-ring": "Save seconds ring",
 		"apply": "Save hardware settings",
 		"applied": "Settings saved",
 		"led-status": "Estimated LED current",

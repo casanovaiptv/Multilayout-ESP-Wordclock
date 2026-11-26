@@ -47,9 +47,9 @@ try {
         if (page.viewportSize().width < 656) await page.locator(".hamburger").click();
         await page.locator(`.pure-menu-link[data-navigation="${item}"]`).click();
     };
-    async function apply() {
-        await page.locator("#hardware-apply").click();
-        await page.waitForFunction(() => document.querySelector("#hardware-status").textContent === "Einstellungen gespeichert");
+    async function apply(form = "hardware") {
+        await page.locator("#" + form + "-apply").click();
+        await page.waitForFunction(id => document.getElementById(id).textContent === "Einstellungen gespeichert", form + "-status");
     }
     await page.goto(origin + "/demo/index.html?lng=de");
     assert.equal(await page.locator("#demo-clock").getAttribute("data-ring-leds"), "60");
@@ -66,12 +66,20 @@ try {
     assert.notEqual(stored.colors[0][0], 172);
 
     await open("hardware");
-    assert.equal(await value("ring-offset"), "8");
     assert.equal(await value("wps-pin"), "19");
+    assert.equal(await value("power-supply"), "2");
+    assert.ok(await page.locator("#power-limit").isChecked());
+    await page.locator("#power-supply").fill("3");
+    await open("frontoptions");
+    assert.ok(await page.locator(".section-frontoptions #ring-form").isVisible());
+    assert.equal(await value("ring-offset"), "8");
+    assert.equal(await value("show-seconds"), "3");
+    assert.ok(await page.locator("#ring-enabled").isChecked());
     await page.locator("#ring-count").fill("48");
     await page.locator("#ring-offset").fill("47");
     await page.locator("#ring-reverse").check();
-    await apply();
+    await apply("ring");
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem("wordclock-development-demo-v1")).supply), 2000);
     assert.equal(await page.locator("#demo-clock").getAttribute("data-ring-leds"), "48");
     await click("start");
     await click("plus");
@@ -88,6 +96,9 @@ try {
 
     await page.locator("#ring-count").fill("120");
     await page.locator("#ring-enabled").uncheck();
+    await apply("ring");
+    await open("hardware");
+    assert.equal(await value("power-supply"), "3");
     await page.locator("#power-limit").check();
     await page.locator("#power-supply").fill("0.5");
     await page.locator("#power-reserve").fill("0.49");
@@ -107,9 +118,9 @@ try {
     await page.locator("#demo-reload").click();
     await page.waitForLoadState();
     await open("hardware");
-    assert.equal(await value("ring-count"), "120");
     assert.equal(await value("wps-pin"), "4");
     await open("frontoptions");
+    assert.equal(await value("ring-count"), "120");
     assert.equal(await value("front-layout"), "24");
 
     for (const width of [390, 768, 1366]) {

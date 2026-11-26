@@ -20,6 +20,7 @@ let TRANSLATION_DE_DE = {
 		"wps-enable": "WPS-Taster aktivieren",
 		"pin": "Taster-GPIO",
 		"wps-note": "Taster gegen Masse anschließen. 3 Sekunden halten und dann WPS am Router starten.",
+		"apply-ring": "Sekundenring speichern",
 		"apply": "Hardware-Einstellungen speichern",
 		"applied": "Einstellungen gespeichert",
 		"led-status": "Geschätzter LED-Strom",
