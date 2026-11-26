@@ -26,6 +26,8 @@ Das ist eine rechnerische Schätzung. Reale Ströme hängen unter anderem vom LE
 
 ### WLAN per WPS
 
+GPIO 19 ist bei einer neuen Konfiguration voreingestellt. Die WPS-Funktion ist zunächst ausgeschaltet. Beim ESP8266 und ESP32-C3 wähle vor dem Aktivieren einen freien GPIO aus der Tabelle.
+
 Verbinde einen Taster zwischen einem freien, zulässigen GPIO und GND. Der GPIO verwendet den internen Pull-up. Wähle und speichere den GPIO in der Oberfläche. Die zulässigen GPIOs der Build-Ziele sind unten aufgeführt. Zugewiesene GPIOs für LED-Daten, Taster oder I²C sind gesperrt. Wird später ein bereits zugewiesener WPS-GPIO für eine andere Hardwarefunktion belegt, deaktiviert die Firmware den WPS-Taster.
 
 | Build-Ziel | Zulässige GPIOs vor Prüfung der Belegung |

@@ -110,6 +110,7 @@ void testMigration() {
         assert(eeprom::migrateHardware());
         assert(hardware.has(hardwareSettings::RingEnabled) == (layout != 11));
         assert(hardware.ringCount == 60 && hardware.ringOffset == 8);
+        assert(hardware.wpsPin == 19);
         assert(!hardware.has(hardwareSettings::RingReverse));
         assert(eeprom::write());
         assert(memcmp(&expected, EEPROM.bytes, sizeof(G)) == 0);

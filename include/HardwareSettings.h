@@ -20,7 +20,7 @@ struct Settings {
     uint16_t supplyMa = 2000;
     uint16_t reserveMa = 300;
     uint8_t flags = 0;
-    uint8_t wpsPin = 255;
+    uint8_t wpsPin = 19;
     uint16_t checksum = 0;
 
     bool has(uint8_t flag) const { return (flags & flag) != 0; }

@@ -13,7 +13,7 @@
         i2cSdaPin: 255, i2cSclPin: 255,
         colors: [[172, 65, 90], [215, 80, 0], [172, 70, 75]],
         enabled: true, count: 60, offset: 8, reverse: false, animation: 1,
-        limit: false, supply: 2000, reserve: 300, wps: false, pin: 255
+        limit: false, supply: 2000, reserve: 300, wps: false, pin: 19
     };
     let state = structuredClone(defaults);
     try { Object.assign(state, JSON.parse(localStorage.getItem(key))); } catch { /* storage is optional */ }

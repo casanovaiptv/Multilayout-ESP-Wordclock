@@ -67,6 +67,7 @@ try {
 
     await open("hardware");
     assert.equal(await value("ring-offset"), "8");
+    assert.equal(await value("wps-pin"), "19");
     await page.locator("#ring-count").fill("48");
     await page.locator("#ring-offset").fill("47");
     await page.locator("#ring-reverse").check();
