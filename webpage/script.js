@@ -38,6 +38,9 @@ const iro = window.iro; // require("@jaames/iro");
 // minified.js dependency removed
 let debugMessageReconfigured = " was reconfigured.";
 let websocket;
+let hardwareLoaded = false;
+let calibrationActive = false;
+let hardwareAction = "";
 let ipEsp = "ws://192.168.4.1";
 let debug = true;
 let command = 1;
@@ -288,6 +291,7 @@ function initWebsocket() {
 		sendCmd(CMD.REQ_COLOR_VALUES);
 		sendCmd(CMD.REQ_TRANSITION);
 		sendCmd(CMD.REQ_CONFIG_VALUES);
+		sendHardware("status");
 	};
 
 	websocket.onclose = function(event) {
@@ -308,6 +312,9 @@ function initWebsocket() {
 		if (connLostEl) connLostEl.style.display = "block";
 
 		autoBrightStop();
+		hardwareLoaded = false;
+		setCalibrationState(false, false);
+		setHardwareStatus("offline");
 
 		debugMessage(`The connection with the websocket was closed (code ${event.code}).`, event);
 	};
@@ -321,6 +328,9 @@ function initWebsocket() {
 		debugMessage(`WebSocket response arrived (command ${data.command}).`, data);
 
 		switch (data.command) {
+			case "hardware":
+				receiveHardware(data);
+				break;
 			case "mqtt": {
 				document.getElementById("mqtt-port").value = data.MQTT_Port;
 				const mqttServer = document.getElementById("mqtt-server");
@@ -409,7 +419,6 @@ function initWebsocket() {
 				enableSpecific("specific-layout-0", !data.isRomanLanguage);
 				enableSpecific("specific-layout-2", data.hasDreiviertel);
 				enableSpecific("specific-layout-3", data.hasTwenty && data.clockTypeDef !== 4);
-				enableSpecific("specific-layout-4", data.hasSecondsFrame);
 				enableSpecific("specific-layout-5", data.hasWeatherLayout);
 
 				// clockTypeDef 4 is EN10x11, doesn't need the options of layout 1 and 3, but needs its own layout 6.
@@ -702,10 +711,114 @@ function hideRebootRecommendedBanner() {
 	if (rebootRecommendedEl) rebootRecommendedEl.style.display = "none";
 }
 
+function sendHardware(action, values) {
+	if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+		setHardwareStatus("offline");
+		return;
+	}
+	if (action !== "status") hardwareAction = action;
+	websocket.send(JSON.stringify(Object.assign({ hardware: action }, values)));
+}
+
+function setHardwareStatus(status) {
+	const message = status ? i18next.t(`hardware.${status}`) : "";
+	if (!hardwareAction || hardwareAction === "apply-hardware") {
+		document.getElementById("hardware-status").textContent = message;
+	}
+	if (hardwareAction !== "apply-hardware") {
+		document.getElementById("ring-status").textContent = message;
+	}
+}
+
+function setCalibrationState(active, enabled) {
+	calibrationActive = active;
+	document.getElementById("ring-calibration").hidden = !active;
+	document.getElementById("ring-calibrate").disabled = !enabled || active;
+	document.getElementById("hardware-apply").disabled = !hardwareLoaded || active;
+	document.getElementById("ring-apply").disabled = !hardwareLoaded || active;
+	document.querySelectorAll("#hardware-form input, #ring-form input, #show-seconds").forEach(input => {
+		input.disabled = !hardwareLoaded || active;
+	});
+}
+
+function receiveHardware(data) {
+	const element = id => document.getElementById(id);
+	const firstUpdate = !hardwareLoaded;
+	hardwareLoaded = true;
+	if (firstUpdate || (!data.telemetry && !data.error && hardwareAction !== "apply-hardware")) {
+		element("ring-enabled").checked = data.enabled;
+		element("ring-count").value = data.count;
+		element("ring-offset").value = data.offset;
+		element("ring-offset").max = data.count - 1;
+		element("ring-reverse").checked = data.reverse;
+		element("show-seconds").value = data.animation;
+	}
+	if (firstUpdate || (!data.telemetry && !data.error && hardwareAction === "apply-hardware")) {
+		element("power-limit").checked = data.limit;
+		element("power-supply").value = data.supply / 1000;
+		element("power-reserve").value = data.reserve / 1000;
+		element("wps-enabled").checked = data.wps;
+		element("wps-pin").value = data.pin;
+	}
+	enableSpecific("specific-layout-7", data.enabled);
+	setCalibrationState(data.calibrating, data.enabled);
+	element("ring-preview").textContent = `${i18next.t("hardware.offset")} ${data.preview}`;
+	const limiting = data.limiting ? ` · ${i18next.t("hardware.limiting")}` : "";
+	const amps = (data.ledMa / 1000).toLocaleString(i18next.resolvedLanguage, { maximumFractionDigits: 3 });
+	element("power-estimate").textContent = `${i18next.t("hardware.led-status")} ${amps} A${limiting}`;
+	element("power-estimate").classList.toggle("limiting", data.limiting);
+	if (!data.telemetry) {
+		setHardwareStatus(data.error || (["apply-ring", "apply-hardware", "save"].includes(hardwareAction) ? "applied" : ""));
+		hardwareAction = "";
+	} else if (firstUpdate) {
+		setHardwareStatus("");
+	}
+}
+
+function initHardwareForm() {
+	const element = id => document.getElementById(id);
+	element("ring-count").addEventListener("input", () => {
+		const offset = element("ring-offset");
+		const count = element("ring-count").valueAsNumber;
+		offset.max = Math.max(0, count - 1);
+		if (offset.valueAsNumber >= count) offset.value = offset.valueAsNumber % count;
+	});
+	element("ring-form").addEventListener("submit", event => {
+		event.preventDefault();
+		sendHardware("apply-ring", {
+			enabled: element("ring-enabled").checked,
+			count: element("ring-count").valueAsNumber,
+			offset: element("ring-offset").valueAsNumber,
+			reverse: element("ring-reverse").checked
+		});
+	});
+	element("hardware-form").addEventListener("submit", event => {
+		event.preventDefault();
+		sendHardware("apply-hardware", {
+			limit: element("power-limit").checked,
+			supply: Math.round(element("power-supply").valueAsNumber * 1000),
+			reserve: Math.round(element("power-reserve").valueAsNumber * 1000),
+			wps: element("wps-enabled").checked,
+			pin: element("wps-pin").valueAsNumber
+		});
+	});
+	document.querySelectorAll("[data-hardware-action]").forEach(button => {
+		button.addEventListener("click", () => sendHardware(button.dataset.hardwareAction));
+	});
+	setCalibrationState(false, false);
+	setInterval(() => {
+		if (document.querySelector(".section-hardware").offsetWidth && !document.hidden &&
+			websocket && websocket.readyState === WebSocket.OPEN) {
+			sendHardware("status");
+		}
+	}, 1500);
+}
+
 // Replaced $.ready with DOMContentLoaded
 document.addEventListener("DOMContentLoaded", function() {
 
 	initConfigValues();
+	initHardwareForm();
 	createColorPicker();
 	setSliders();
 	setElementsForFunctionsMenu();
@@ -778,6 +891,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			let navigation = this.dataset.navigation;
 
 			setActiveNavigation(navigation);
+			const hamburger = document.querySelector(".hamburger");
+			if (hamburger.getAttribute("aria-expanded") === "true") hamburger.click();
+			if (navigation === "hardware" && websocket && websocket.readyState === WebSocket.OPEN) {
+				sendHardware("status");
+			}
+			if (calibrationActive && navigation !== "frontoptions") {
+				sendHardware("cancel");
+			}
 
 			if (navigation === "functions") {
 				sendCmd(CMD.REQ_BIRTHDAYS);

@@ -71,6 +71,13 @@ public:
 
     //------------------------------------------------------------------------------
 
+    uint16_t minimumMatrixPixels() override {
+        const uint8_t columns = G.buildTypeDef == BuildTypeDef::DoubleResM1
+                                    ? colsWordMatrix() * 2 - 1
+                                    : colsWordMatrix();
+        return 2 * rowsWordMatrix() * columns;
+    }
+
     virtual const bool hasLed4x() override { return false; }
 
     //------------------------------------------------------------------------------

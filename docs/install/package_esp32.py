@@ -5,6 +5,7 @@ This script never flashes a device and fails closed on missing or invalid images
 """
 import hashlib
 import json
+import json
 import os
 import shutil
 from pathlib import Path
@@ -17,7 +18,7 @@ output.mkdir(parents=True, exist_ok=True)
 images = [
     ("bootloader.bin", build / "bootloader.bin", 0x1000),
     ("partitions.bin", build / "partitions.bin", 0x8000),
-    ("boot_app0.bin", Path.home() / ".platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin", 0xE000),
+    ("boot_app0.bin", Path(os.environ.get("PLATFORMIO_CORE_DIR", Path.home() / ".platformio")) / "packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin", 0xE000),
     ("firmware.bin", build / "firmware.bin", 0x10000),
 ]
 
@@ -39,8 +40,8 @@ if len(partitions) < 2 or partitions[:2] != b"\xaa\x50":
 
 manifest = {
     "name": "Multilayout ESP Wordclock",
-    "version": os.environ.get("GITHUB_SHA", "development")[:12],
-    "new_install_prompt_erase": False,
+    "version": json.loads((root / "package.json").read_text(encoding="utf-8"))["version"],
+    "new_install_prompt_erase": True,
     "builds": [{
         "chipFamily": "ESP32",
         "parts": [{"path": name, "offset": offset} for name, _, offset in images],

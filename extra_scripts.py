@@ -64,3 +64,5 @@ grunt_build = env.Command(
 env.Depends(grunt_build, npm_ci)
 env.Depends(grunt_build, package_json)
 env.Depends(grunt_build, env.Glob("webpage/*"))
+env.Depends(grunt_build, env.Glob("webpage/icons/*"))
+env.Depends(grunt_build, env.Glob("webpage/language/*"))

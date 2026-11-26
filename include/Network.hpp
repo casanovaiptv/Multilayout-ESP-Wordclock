@@ -40,7 +40,8 @@ void Network::setup(const char *hostname) {
     wifiManager.autoConnect(CP_SSID);
 #endif
     // explicitly disable AP, esp defaults to STA+AP
-    WiFi.enableAP(false);
+    if (!wifiManager.getConfigPortalActive())
+        WiFi.enableAP(false);
     Network::info();
 }
 

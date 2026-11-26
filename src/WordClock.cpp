@@ -63,7 +63,7 @@ RTC_Type RTC;
 #include "TransitionTypes/Transition.h"
 
 Transition *transition;
-SecondsFrame *secondsFrame;
+SecondsFrame secondsFrame;
 Led led;
 ClockWork clockWork;
 Mqtt mqtt(clockWork);
@@ -73,6 +73,7 @@ void setDefaultHardwarePins();
 bool hardwarePinsAreValid();
 void ensureI2CPins();
 void ensureTimezone();
+bool wpsPinAllowed(uint8_t pin);
 
 LedStripInterface *activeLedStrip = nullptr;
 
@@ -89,6 +90,9 @@ void deleteActiveLedStrip() {
 #include "Symbols.h"
 #include "TransitionTypes/Transition.hpp"
 #include "WiFi.hpp"
+#include "WpsButton.h"
+
+#include "HardwareWeb.h"
 
 namespace {
 constexpr uint16_t EEPROM_SIZE = 512;
@@ -104,8 +108,11 @@ constexpr uint8_t MAX_HARDWARE_PIN = 39;
 #endif
 } // namespace
 
-static_assert(sizeof(G) < EEPROM_SIZE,
-              "Configuration data is too large for reserved EEPROM storage");
+static_assert(sizeof(G) <= hardwareSettings::StorageAddress,
+              "Legacy configuration overlaps the hardware settings");
+static_assert(hardwareSettings::StorageAddress + sizeof(hardware) <=
+                  POWER_CYCLE_COUNT_ADDRESS,
+              "Hardware settings overlap the power-cycle counter");
 
 uint16_t powerCycleCount = 0; // Variable to store power cycle count
 
@@ -141,12 +148,6 @@ void time_is_set() {
     }
     Serial.printf("Set new time: %02d:%02d:%02d (%s)\n", tm.tm_hour, tm.tm_min,
                   tm.tm_sec, origin.c_str());
-
-    // Calc second frame for seconds variants that use a frame
-    uint16_t numPixels = usedClockType->numPixelsFrameMatrix();
-    if (numPixels != 0) {
-        _secondFrame = (tm.tm_sec * numPixels) / 60;
-    }
 
     G.progInit = true;
     parametersChanged = true;
@@ -295,6 +296,70 @@ void ensureI2CPins() {
 // Start setup()
 //------------------------------------------------------------------------------
 
+WpsButton wpsButton;
+bool webServerStarted = false;
+bool waitingForFallback = false;
+uint32_t fallbackSince = 0;
+
+void startWebServer() {
+    if (!webServerStarted) {
+        webSocket.begin();
+        webServerStarted = true;
+    }
+}
+
+void startWpsFallbackPortal() {
+    if (webServerStarted) {
+        webSocket.close();
+        webServerStarted = false;
+    }
+    wifiManager.setConfigPortalBlocking(false);
+#if CP_PROTECTED
+    wifiManager.startConfigPortal(CP_SSID, CP_PASSWORD);
+#else
+    wifiManager.startConfigPortal(CP_SSID);
+#endif
+}
+
+bool updateWpsDisplay() {
+    static WpsButton::State displayed = WpsButton::State::Idle;
+    const auto state = wpsButton.update();
+    if (state != displayed) {
+        displayed = state;
+        if (state == WpsButton::State::Idle) {
+            hardwareWeb::restoreDisplay();
+        } else {
+            hardwareWeb::disconnected(hardwareWeb::calibrationOwner);
+            activeLedStrip->clearAll();
+            const float hue = state == WpsButton::State::Success  ? 0.33f
+                              : state == WpsButton::State::Failed ? 0.f
+                                                                  : 0.66f;
+            for (uint8_t row = 0; row < usedClockType->rowsWordMatrix();
+                 ++row) {
+                for (uint8_t col = 0; col < usedClockType->colsWordMatrix();
+                     ++col) {
+                    led.setPixel(row, col, HsbColor(hue, 1.f, 0.2f));
+                }
+            }
+            led.show();
+        }
+    }
+
+    if (wpsButton.needsPortal()) {
+        waitingForFallback = true;
+        fallbackSince = millis();
+    }
+    if (waitingForFallback && state == WpsButton::State::Idle) {
+        if (WiFi.status() == WL_CONNECTED) {
+            waitingForFallback = false;
+        } else if (millis() - fallbackSince >= 20000) {
+            waitingForFallback = false;
+            startWpsFallbackPortal();
+        }
+    }
+    return state != WpsButton::State::Idle;
+}
+
 void setup() {
     //-------------------------------------
     // Start serial interface if required
@@ -338,6 +403,7 @@ void setup() {
     //-------------------------------------
 
     if (G.sernr != SERNR) {
+        hardware = hardwareSettings::factoryDefaults();
         for (uint16_t i = 0; i < EEPROM_SIZE; i++) {
             EEPROM.write(i, i);
         }
@@ -352,10 +418,11 @@ void setup() {
             G.color[i] = {0, 0, 0};
         }
         G.color[Foreground] = HsbColor(DEFAULT_HUE / 360.f, 1.f, 0.5f);
+        G.color[Frame] = G.color[Foreground];
         G.effectBri = 2;
         G.effectSpeed = 5;
         G.client_nr = 0;
-        G.secondVariant = SecondVariant::Off;
+        G.secondVariant = SecondVariant::FrameSectorToggle;
         G.bitmapSymbol = BitmapSymbol::HEART;
 // C++23 #elifdef doesn't work yet
 #ifdef MINUTE_Off
@@ -494,6 +561,9 @@ void setup() {
         eeprom::write();
     }
 
+    if (eeprom::migrateHardware())
+        eeprom::write();
+
     usedClockType = clockWork.getPointer(G.clockTypeDef);
 
     // Area that will be animated:
@@ -504,12 +574,6 @@ void setup() {
     // TODO: Get frame width from usedClockType.
     transition = new Transition(usedClockType->rowsWordMatrix(),
                                 usedClockType->colsWordMatrix());
-
-    if (usedClockType->numPixelsFrameMatrix() != 0) {
-        secondsFrame = new SecondsFrame(usedClockType->numPixelsFrameMatrix());
-    } else {
-        secondsFrame = nullptr;
-    }
 
     //-------------------------------------
     // Initialize LEDs
@@ -564,6 +628,10 @@ void setup() {
     if (G.bootShowWifi) {
         led.setBitmapSymbol(WLAN100, HsbColor(0.66f, 1.0f, 0.2f));
     }
+    const bool wpsEnabled = hardware.has(hardwareSettings::WpsEnabled) &&
+                            wpsPinAllowed(hardware.wpsPin);
+    wpsButton.begin();
+    wifiManager.setConfigPortalBlocking(!wpsEnabled);
     network.setup(G.hostname);
 #if WIFI_VERBOSE
     int strength = network.getQuality();
@@ -607,8 +675,9 @@ void setup() {
 #if WEB_PROTECTED
     webSocket.setAuthorization(WEB_USER, WEB_PASSWORD);
 #endif
-    webSocket.begin();
     webSocket.onEvent(webSocketEvent);
+    if (!wifiManager.getConfigPortalActive())
+        startWebServer();
 
     Serial.println("Websocket started");
 
@@ -681,9 +750,7 @@ void setup() {
     //-------------------------------------
     // Frame Init
     //-------------------------------------
-    if (secondsFrame) {
-        secondsFrame->initFrame();
-    }
+    secondsFrame.reset();
 
     //-------------------------------------
     // Transition Init
@@ -705,7 +772,9 @@ void loop() {
     //------------------------------------------------
     // Time
     //------------------------------------------------
-    time_t utc = time(nullptr);
+    timeval now{};
+    gettimeofday(&now, nullptr);
+    const time_t utc = now.tv_sec;
     struct tm tm;
     localtime_r(&utc, &tm);
     if (utc > 100000000) {
@@ -726,7 +795,24 @@ void loop() {
     //------------------------------------------------
     // Websocket
     //------------------------------------------------
-    webSocket.loop();
+    if (!wifiManager.getConfigPortalActive())
+        startWebServer();
+    if (webServerStarted)
+        webSocket.loop();
+
+    if (hardwareWeb::calibrating() &&
+        millis() - hardwareWeb::calibrationTouched >= 120000) {
+        hardwareWeb::disconnected(hardwareWeb::calibrationOwner);
+    }
+
+    const bool wpsDisplay = updateWpsDisplay();
+    static uint32_t recoveryTick = 0;
+    if (powerRecovering && millis() - recoveryTick >= 50) {
+        recoveryTick = millis();
+        led.show();
+    }
+    if (wpsDisplay || hardwareWeb::calibrating())
+        return;
 
     //------------------------------------------------
     // MQTT
@@ -738,9 +824,10 @@ void loop() {
     //------------------------------------------------
     // Frame
     //------------------------------------------------
-    if (secondsFrame) {
-        secondsFrame->loop();
-    }
+    const uint32_t elapsed =
+        utc > 100000000 ? uint32_t(tm.tm_sec) * 1000 + now.tv_usec / 1000
+                        : millis() % 60000;
+    secondsFrame.loop(elapsed);
 
     //------------------------------------------------
     // Transition

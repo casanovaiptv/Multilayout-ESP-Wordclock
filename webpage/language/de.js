@@ -1,4 +1,37 @@
 let TRANSLATION_DE_DE = {
+	"hardware": {
+		"title": "Hardware",
+		"ring": "Sekundenring",
+		"ring-enable": "Sekundenring aktivieren",
+		"count": "Anzahl LEDs",
+		"offset": "Start-Offset",
+		"reverse": "Gegen den Uhrzeigersinn",
+		"animation": "Animation",
+		"calibration-help": "Speichere die Ring-Einstellungen vor der Kalibrierung. Dabei leuchtet nur die LED an der Nullposition.",
+		"calibrate": "Kalibrieren",
+		"save-offset": "Offset speichern",
+		"cancel": "Abbrechen",
+		"power": "Strombegrenzung",
+		"power-enable": "Strombegrenzung aktivieren",
+		"supply": "Netzteil (A)",
+		"reserve": "Reserve (A)",
+		"power-note": "Rechnerische Schätzung des LED-Stroms. Die Installation benötigt geeignete elektrische Schutzmaßnahmen.",
+		"wps": "WPS-Taster",
+		"wps-enable": "WPS-Taster aktivieren",
+		"pin": "Taster-GPIO",
+		"wps-note": "Taster gegen Masse anschließen. 3 Sekunden halten und dann WPS am Router starten.",
+		"apply-ring": "Sekundenring speichern",
+		"apply": "Hardware-Einstellungen speichern",
+		"applied": "Einstellungen gespeichert",
+		"led-status": "Geschätzter LED-Strom",
+		"limiting": "Begrenzung greift ein",
+		"invalid": "Einstellungen prüfen und erneut versuchen.",
+		"storage": "Speichern im Flash fehlgeschlagen.",
+		"gpio": "GPIO ist nicht verfügbar oder bereits belegt.",
+		"busy": "Eine Kalibrierung ist bereits aktiv.",
+		"offline": "Verbinde dich mit der Uhr, um Hardware-Einstellungen zu ändern."
+	},
+
 	"title": "Wortuhr",
 
 	"menu": {

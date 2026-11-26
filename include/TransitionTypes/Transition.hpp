@@ -35,10 +35,7 @@ Transition::Transition(uint8_t rows, uint8_t cols) {
 //------------------------------------------------------------------------------
 
 Transition::~Transition() {
-#if 0
-    // matrix type changes during runtime forces a ESP reset
-    // probably to avoid reinitializing the Neopixelbus
-    for (uint8_t row = 0; row < usedClockType->rowsWordMatrix(); row++) {
+    for (uint8_t row = 0; row < maxRows; ++row) {
         delete[] old[row];
         delete[] act[row];
         delete[] work[row];
@@ -46,9 +43,10 @@ Transition::~Transition() {
     delete[] old;
     delete[] act;
     delete[] work;
-    delete[] tmp;
     delete[] rain;
-#endif
+    delete[] balls;
+    delete snake;
+    delete firework;
 }
 
 //------------------------------------------------------------------------------
@@ -399,15 +397,14 @@ void Transition::colorize(RgbfColor **dest) {
 //------------------------------------------------------------------------------
 
 void Transition::saveMatrix() {
-    static bool firstRun = true;
     copyMatrix(old, act);
     analyzeColors(act, STRIPE, foreground, background);
     foregroundMinute = foreground;
     if (isColorization()) {
         colorize(act);
     }
-    if (firstRun) {
-        firstRun = false;
+    if (firstSave) {
+        firstSave = false;
         copyMatrix(work, act);
     }
     return;

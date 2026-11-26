@@ -1,0 +1,20 @@
+<aside class="box demo-panel">
+    <div>
+        <h2>Browser-Demo</h2>
+        <p>Farben, Layout, Sekundenring und WLAN werden simuliert. Änderungen bleiben in diesem Browser gespeichert.</p>
+        <div class="hardware-actions">
+            <button type="button" class="pure-button" id="demo-reload">Einstellungen laden</button>
+            <button type="button" class="pure-button" id="demo-reset">Demo zurücksetzen</button>
+        </div>
+        <details>
+            <summary>WPS simulieren</summary>
+            <div class="pure-form hardware-actions">
+                <label for="demo-wps-outcome">Ergebnis</label>
+                <select id="demo-wps-outcome"><option value="success">Erfolg</option><option value="failed">Fehler</option><option value="timeout">Zeitüberschreitung</option></select>
+                <button type="button" class="pure-button" id="demo-wps-start" disabled>WPS-Tastendruck simulieren</button>
+                <output id="demo-wps-status" aria-live="polite"></output>
+            </div>
+        </details>
+    </div>
+    <canvas id="demo-clock" width="480" height="480" aria-label="Simulierte LED-Anzeige"></canvas>
+</aside>
